@@ -21,8 +21,10 @@ async def request_async():
 
 @take_up_time
 def run():
-    tasks = [asyncio.ensure_future(request_async()) for x in range(0, 49)]
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    tasks = [asyncio.ensure_future(request_async(), loop=loop) for x in range(0, 49)]
+    # loop = asyncio.get_event_loop()
     tasks = asyncio.gather(*tasks)
     loop.run_until_complete(tasks)
 
