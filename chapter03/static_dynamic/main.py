@@ -21,15 +21,15 @@ async def index2():
 
 app.add_api_route(path="/index2", endpoint=index2, methods=["GET", "POST"])
 
-router_uesr = APIRouter(prefix="/user", tags=["用户模块"])
+router_user = APIRouter(prefix="/user", tags=["用户模块"])
 
 
-@router_uesr.get("/user/login")
+@router_user.get("/user/login")
 def user_login():
     return {"ok": "登入成功！"}
 
 
-@router_uesr.api_route("/user/api/login", methods=['GET', 'POST'])
+@router_user.api_route("/user/api/login", methods=['GET', 'POST'])
 def user_api_route_login():
     return {"ok": "登入成功！"}
 
@@ -38,13 +38,13 @@ def add_user_api_route_login():
     return {"ok": "登入成功！"}
 
 
-router_uesr.add_api_route("/user/add/api/login", methods=['GET', 'POST'], endpoint=add_user_api_route_login)
-app.include_router(router_uesr)
+router_user.add_api_route("/user/add/api/login", methods=['GET', 'POST'], endpoint=add_user_api_route_login)
+app.include_router(router_user)
 
 if __name__ == "__main__":
     import uvicorn
     import os
 
-    app_modeel_name = os.path.basename(__file__).replace(".py", "")
-    print(app_modeel_name)
-    uvicorn.run(f"{app_modeel_name}:app", host='127.0.0.1', reload=True)
+    app_model_name = os.path.basename(__file__).replace(".py", "")
+    print(app_model_name)
+    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
