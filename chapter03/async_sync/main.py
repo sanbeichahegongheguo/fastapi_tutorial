@@ -9,17 +9,15 @@ app = FastAPI(routes=None)
 
 @app.get(path="/async")
 async def asyncdef():
-    await asyncio.sleep(10)
+    await asyncio.sleep(3)
     print("当前协程运行的线程ID:", threading.current_thread().ident)
     return {"index": "async"}
 
 @app.get(path="/sync")
 def syncdef():
-    time.sleep(10)
-    print("当前普通函数运行的线程ID:",threading.current_thread().ident)
+    time.sleep(3)
+    print("当前普通函数运行的线程ID:", threading.current_thread().ident)
     return {"index": "sync"}
-
-
 
 
 if __name__ == "__main__":
