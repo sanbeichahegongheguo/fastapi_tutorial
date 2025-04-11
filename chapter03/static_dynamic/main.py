@@ -22,13 +22,13 @@ app.add_api_route(path="/index2", endpoint=index2, methods=["GET", "POST"])
 
 router_user = APIRouter(prefix="/user", tags=["用户模块"])
 
-@router_user.get("/user/login")
-def user_login():
-    return {"ok": "登入成功！"}
+@router_user.get("/{user}/login")
+def user_login(user):
+    return {"ok": f"用户 {user} login登入成功！"}
 
-@router_user.api_route("/user/api/login", methods=['GET', 'POST'])
-def user_api_route_login():
-    return {"ok": "登入成功！"}
+@router_user.api_route("/{user}/api/login", methods=['GET', 'POST'])
+def user_api_route_login(user):
+    return {"ok": f"用户 {user} api登入成功！"}
 
 def add_user_api_route_login():
     return {"ok": "登入成功！"}
