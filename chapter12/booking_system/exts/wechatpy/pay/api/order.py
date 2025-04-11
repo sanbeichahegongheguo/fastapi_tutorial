@@ -13,10 +13,27 @@ from exts.wechatpy.pay.utils import calculate_signature
 
 class WeChatOrder(BaseWeChatPayAPI):
 
-    def create(self, trade_type, body, total_fee, notify_url, client_ip=None,
-               user_id=None, out_trade_no=None, detail=None, attach=None,
-               fee_type='CNY', time_start=None, time_expire=None, goods_tag=None,
-               product_id=None, device_info=None, limit_pay=None, scene_info=None, sub_user_id=None):
+    def create(
+        self,
+        trade_type,
+        body,
+        total_fee,
+        notify_url,
+        client_ip=None,
+        user_id=None,
+        out_trade_no=None,
+        detail=None,
+        attach=None,
+        fee_type="CNY",
+        time_start=None,
+        time_expire=None,
+        goods_tag=None,
+        product_id=None,
+        device_info=None,
+        limit_pay=None,
+        scene_info=None,
+        sub_user_id=None,
+    ):
         """
         统一下单接口
 
@@ -41,43 +58,41 @@ class WeChatOrder(BaseWeChatPayAPI):
         :type scene_info: dict
         :return: 返回的结果数据
         """
-        now = datetime.fromtimestamp(time.time(), tz=timezone('Asia/Shanghai'))
+        now = datetime.fromtimestamp(time.time(), tz=timezone("Asia/Shanghai"))
         hours_later = now + timedelta(hours=2)
         if time_start is None:
             time_start = now
         if time_expire is None:
             time_expire = hours_later
         if not out_trade_no:
-            out_trade_no = '{0}{1}{2}'.format(
-                self.mch_id,
-                now.strftime('%Y%m%d%H%M%S'),
-                random.randint(1000, 10000)
+            out_trade_no = "{0}{1}{2}".format(
+                self.mch_id, now.strftime("%Y%m%d%H%M%S"), random.randint(1000, 10000)
             )
         if scene_info is not None:
             scene_info = json.dumps(scene_info, ensure_ascii=False)
         data = {
-            'appid': self.appid,
-            'sub_appid': self.sub_appid,
-            'device_info': device_info,
-            'body': body,
-            'detail': detail,
-            'attach': attach,
-            'out_trade_no': out_trade_no,
-            'fee_type': fee_type,
-            'total_fee': total_fee,
-            'spbill_create_ip': client_ip or get_external_ip(),
-            'time_start': time_start.strftime('%Y%m%d%H%M%S'),
-            'time_expire': time_expire.strftime('%Y%m%d%H%M%S'),
-            'goods_tag': goods_tag,
-            'notify_url': notify_url,
-            'trade_type': trade_type,
-            'limit_pay': limit_pay,
-            'product_id': product_id,
-            'openid': user_id,
-            'sub_openid': sub_user_id,
-            'scene_info': scene_info,
+            "appid": self.appid,
+            "sub_appid": self.sub_appid,
+            "device_info": device_info,
+            "body": body,
+            "detail": detail,
+            "attach": attach,
+            "out_trade_no": out_trade_no,
+            "fee_type": fee_type,
+            "total_fee": total_fee,
+            "spbill_create_ip": client_ip or get_external_ip(),
+            "time_start": time_start.strftime("%Y%m%d%H%M%S"),
+            "time_expire": time_expire.strftime("%Y%m%d%H%M%S"),
+            "goods_tag": goods_tag,
+            "notify_url": notify_url,
+            "trade_type": trade_type,
+            "limit_pay": limit_pay,
+            "product_id": product_id,
+            "openid": user_id,
+            "sub_openid": sub_user_id,
+            "scene_info": scene_info,
         }
-        return self._post('pay/unifiedorder', data=data)
+        return self._post("pay/unifiedorder", data=data)
 
     def query(self, transaction_id=None, out_trade_no=None):
         """
@@ -88,11 +103,11 @@ class WeChatOrder(BaseWeChatPayAPI):
         :return: 返回的结果数据
         """
         data = {
-            'appid': self.appid,
-            'transaction_id': transaction_id,
-            'out_trade_no': out_trade_no,
+            "appid": self.appid,
+            "transaction_id": transaction_id,
+            "out_trade_no": out_trade_no,
         }
-        return self._post('pay/orderquery', data=data)
+        return self._post("pay/orderquery", data=data)
 
     def close(self, out_trade_no):
         """
@@ -102,10 +117,10 @@ class WeChatOrder(BaseWeChatPayAPI):
         :return: 返回的结果数据
         """
         data = {
-            'appid': self.appid,
-            'out_trade_no': out_trade_no,
+            "appid": self.appid,
+            "out_trade_no": out_trade_no,
         }
-        return self._post('pay/closeorder', data=data)
+        return self._post("pay/closeorder", data=data)
 
     def get_appapi_params(self, prepay_id, timestamp=None, nonce_str=None):
         """
@@ -117,15 +132,15 @@ class WeChatOrder(BaseWeChatPayAPI):
         :return: 签名
         """
         data = {
-            'appid': self.appid,
-            'partnerid': self.mch_id,
-            'prepayid': prepay_id,
-            'package': 'Sign=WXPay',
-            'timestamp': timestamp or to_text(int(time.time())),
-            'noncestr': nonce_str or random_string(32)
+            "appid": self.appid,
+            "partnerid": self.mch_id,
+            "prepayid": prepay_id,
+            "package": "Sign=WXPay",
+            "timestamp": timestamp or to_text(int(time.time())),
+            "noncestr": nonce_str or random_string(32),
         }
         sign = calculate_signature(data, self._client.api_key)
-        data['sign'] = sign
+        data["sign"] = sign
         return data
 
     def get_appapi_params_xiugai(self, prepay_id, timestamp=None, nonce_str=None):
@@ -138,14 +153,14 @@ class WeChatOrder(BaseWeChatPayAPI):
         :return: 签名
         """
         data = {
-            'appId': self.appid,
-            'timeStamp': timestamp or to_text(int(time.time())),
-            'nonceStr': nonce_str or random_string(32),
-            'package': 'prepay_id='+prepay_id,
-            'signType': 'MD5'
+            "appId": self.appid,
+            "timeStamp": timestamp or to_text(int(time.time())),
+            "nonceStr": nonce_str or random_string(32),
+            "package": "prepay_id=" + prepay_id,
+            "signType": "MD5",
         }
         sign = calculate_signature(data, self._client.api_key)
-        data['paySign'] = sign
+        data["paySign"] = sign
         return data
 
     def reverse(self, transaction_id=None, out_trade_no=None):
@@ -159,8 +174,8 @@ class WeChatOrder(BaseWeChatPayAPI):
         :return: 返回的结果数据
         """
         data = {
-            'appid': self.appid,
-            'transaction_id': transaction_id,
-            'out_trade_no': out_trade_no,
+            "appid": self.appid,
+            "transaction_id": transaction_id,
+            "out_trade_no": out_trade_no,
         }
-        return self._post('secapi/pay/reverse', data=data)
+        return self._post("secapi/pay/reverse", data=data)

@@ -9,11 +9,7 @@ class WeChatCipher(object):
     def __init__(self, key, iv=None):
         iv = iv or key[:16]
         backend = default_backend()
-        self.cipher = Cipher(
-            algorithms.AES(key),
-            modes.CBC(iv),
-            backend=backend
-        )
+        self.cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
 
     def encrypt(self, plaintext):
         encryptor = self.cipher.encryptor()

@@ -11,19 +11,21 @@ from fastapi import Request
 app = FastAPI()
 
 
-
 @app.post("/api/v1/json1/")
 async def index():
     # 默认返回类型就是JSONResponse
     return {"code": 0, "msg": "ok", "data": None}
 
+
 @app.post("/api/v1/json2/")
 async def index():
     return JSONResponse(status_code=404, content={"code": 0, "msg": "ok", "data": None})
 
+
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)

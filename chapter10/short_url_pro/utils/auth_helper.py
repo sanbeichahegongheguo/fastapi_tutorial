@@ -1,12 +1,10 @@
-
-from fastapi import  HTTPException,status
+from fastapi import HTTPException, status
 from jose import JWTError, jwt
 from pydantic import BaseModel, ValidationError
 from jose import jwt
 
 SECRET_KEY = "la3rwLn7VA%A9v*NC^$FX5J5QtW^T!B4"
 ALGORITHM = "HS256"
-
 
 
 class AuthToeknHelper:
@@ -30,6 +28,7 @@ class AuthToeknHelper:
             raise credentials_exception
         return payload
 
-if __name__ == '__main__':
-    print(AuthToeknHelper.token_encode({"user":"XZSD"}))
-    print(AuthToeknHelper.token_decode(AuthToeknHelper.token_encode({"user":"XZSD"})))
+
+if __name__ == "__main__":
+    print(AuthToeknHelper.token_encode({"user": "XZSD"}))
+    print(AuthToeknHelper.token_decode(AuthToeknHelper.token_encode({"user": "XZSD"})))

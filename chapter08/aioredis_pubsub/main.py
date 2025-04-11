@@ -1,5 +1,4 @@
-
-from fastapi import FastAPI,Request
+from fastapi import FastAPI, Request
 import asyncio
 import async_timeout
 import aioredis
@@ -9,6 +8,8 @@ app = FastAPI()
 
 # 定义事件消息模型
 from pydantic import BaseModel
+
+
 class MessageEvent(BaseModel):
     username: str
     message: dict
@@ -24,8 +25,10 @@ async def reader(channel: aioredis.client.PubSub):
                 print("jiesh？ssssssssss", message)
                 if message is not None:
                     pass
-                    message_event = MessageEvent.parse_raw(message["data"].decode('utf-8'))
-                    print("订阅接收到消息为：",message_event)
+                    message_event = MessageEvent.parse_raw(
+                        message["data"].decode("utf-8")
+                    )
+                    print("订阅接收到消息为：", message_event)
                 await asyncio.sleep(0.01)
         except asyncio.TimeoutError:
             pass
@@ -34,7 +37,7 @@ async def reader(channel: aioredis.client.PubSub):
 @app.on_event("startup")
 async def startup_event():
     # 创建Redis对象
-    redis:Redis = aioredis.from_url("redis://localhost")
+    redis: Redis = aioredis.from_url("redis://localhost")
     # 创建消息发布定义对象获取到发布订阅对象
     pubsub = redis.pubsub()
     # 把当前的对象添加到全局APP上下中
@@ -43,7 +46,9 @@ async def startup_event():
     # 开始订阅相关频道
     await pubsub.subscribe("channel:1", "channel:2")
     # 消息模型的创建
-    event = MessageEvent(username="xiaozhongtongxue", message={"msg": "在startup_event发布的事件消息"})
+    event = MessageEvent(
+        username="xiaozhongtongxue", message={"msg": "在startup_event发布的事件消息"}
+    )
     # 消息发布0发布到channel:1频道上
     await redis.publish(channel="channel:1", message=event.json())
     # 执行消息订阅循环监听
@@ -61,16 +66,21 @@ async def shutdown_event():
     # 关闭redis连接
     app.state.redis.close()
 
-@app.get('/index')
-async def get(re:Request):
+
+@app.get("/index")
+async def get(re: Request):
     # 手动执行其他消息的发布
-    event = MessageEvent(username="xiaozhongtongxue", message={"msg": "我是来自API接口发布的消息！"})
+    event = MessageEvent(
+        username="xiaozhongtongxue", message={"msg": "我是来自API接口发布的消息！"}
+    )
     await re.app.state.redis.publish(channel="channel:1", message=event.json())
     return "ok"
+
 
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_modeel_name = os.path.basename(__file__).replace(".py", "")
     print(app_modeel_name)
-    uvicorn.run(f"{app_modeel_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_modeel_name}:app", host="127.0.0.1", reload=True)

@@ -14,9 +14,15 @@
 from fastapi import FastAPI, Request
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.exceptions import RequestValidationError
-from exts.responses.json_response import InternalErrorException, \
-    MethodnotallowedException, \
-    NotfoundException, LimiterResException, BadrequestException, ParameterException, Businesserror
+from exts.responses.json_response import (
+    InternalErrorException,
+    MethodnotallowedException,
+    NotfoundException,
+    LimiterResException,
+    BadrequestException,
+    ParameterException,
+    Businesserror,
+)
 
 from enum import Enum
 
@@ -32,9 +38,14 @@ class ExceptionEnum(Enum):
 
 
 class BusinessError(Exception):
-    __slots__ = ['err_code', 'err_code_des']
+    __slots__ = ["err_code", "err_code_des"]
 
-    def __init__(self, result: ExceptionEnum = None, err_code: str = "0000", err_code_des: str = ""):
+    def __init__(
+        self,
+        result: ExceptionEnum = None,
+        err_code: str = "0000",
+        err_code_des: str = "",
+    ):
         if result:
             self.err_code = result.value[0]
             self.err_code_des = err_code_des or result.value[1]
@@ -52,24 +63,36 @@ class ApiExceptionHandler:
 
     def init_app(self, app: FastAPI):
         app.add_exception_handler(Exception, handler=self.all_exception_handler)
-        app.add_exception_handler(StarletteHTTPException, handler=self.http_exception_handler)
+        app.add_exception_handler(
+            StarletteHTTPException, handler=self.http_exception_handler
+        )
         app.add_exception_handler(BusinessError, handler=self.all_businesserror_handler)
-        app.add_exception_handler(RequestValidationError, handler=self.validation_exception_handler)
+        app.add_exception_handler(
+            RequestValidationError, handler=self.validation_exception_handler
+        )
 
-    async def validation_exception_handler(self, request: Request, exc: RequestValidationError):
-        return ParameterException(http_status_code=400, api_code=400, message='参数校验错误', result={
-            "detail": exc.errors(),
-            "body": exc.body
-        })
+    async def validation_exception_handler(
+        self, request: Request, exc: RequestValidationError
+    ):
+        return ParameterException(
+            http_status_code=400,
+            api_code=400,
+            message="参数校验错误",
+            result={"detail": exc.errors(), "body": exc.body},
+        )
 
     async def all_businesserror_handler(self, request: Request, exc: BusinessError):
-        return Businesserror(http_status_code=200, api_code=exc.err_code, message=exc.err_code_des)
+        return Businesserror(
+            http_status_code=200, api_code=exc.err_code, message=exc.err_code_des
+        )
 
     async def all_exception_handler(self, request: Request, exc: Exception):
 
         return InternalErrorException()
 
-    async def http_exception_handler(self, request: Request, exc: StarletteHTTPException):
+    async def http_exception_handler(
+        self, request: Request, exc: StarletteHTTPException
+    ):
         if exc.status_code == 405:
             return MethodnotallowedException()
         if exc.status_code == 404:

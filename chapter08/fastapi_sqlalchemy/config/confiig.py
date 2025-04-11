@@ -3,19 +3,19 @@
 # + + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + +
 #        ┏┓　　　┏┓+ +
 # 　　　┏┛┻━━━┛┻┓ + +
-# 　　　┃　　　　　　 ┃ 　
+# 　　　┃　　　　　　 ┃
 # 　　　┃　　　━　　　┃ ++ + + +
 # 　　 ████━████ ┃+
 # 　　　┃　　　　　　 ┃ +
 # 　　　┃　　　┻　　　┃
 # 　　　┃　　　　　　 ┃ + +
 # 　　　┗━┓　　　┏━┛
-# 　　　　　┃　　　┃　　　　　　　　　　　
-# 　　　　　┃　　　┃ + + + +
-# 　　　　　┃　　　┃　　　　Codes are far away from bugs with the animal protecting　　　
-# 　　　　　┃　　　┃ + 　　　　神兽保佑,代码无bug　　
 # 　　　　　┃　　　┃
-# 　　　　　┃　　　┃　　+　　　　　　　　　
+# 　　　　　┃　　　┃ + + + +
+# 　　　　　┃　　　┃　　　　Codes are far away from bugs with the animal protecting
+# 　　　　　┃　　　┃ + 　　　　神兽保佑,代码无bug
+# 　　　　　┃　　　┃
+# 　　　　　┃　　　┃　　+
 # 　　　　　┃　 　　┗━━━┓ + +
 # 　　　　　┃ 　　　　　　　┣┓
 # 　　　　　┃ 　　　　　　　┏┛
@@ -35,9 +35,11 @@ Author = zyx
 from pydantic import BaseSettings
 from functools import lru_cache
 
+
 class Settings(BaseSettings):
     # 定义连接数据库的URL地址
     ASYNC_DATABASE_URI: str = "sqlite+aiosqlite:///user.db"
+
 
 @lru_cache()
 def get_settings():

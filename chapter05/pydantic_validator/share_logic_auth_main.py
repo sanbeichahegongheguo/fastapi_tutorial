@@ -27,8 +27,7 @@ class Xuser(Base):
     pass
 
 
-yuser = Yuser(name='xiaozhong')
-print("xiaozhong:名字",yuser.name)
-xuser = Xuser(name='_xiao')
-print("_xiao:名字",xuser.name)
-
+yuser = Yuser(name="xiaozhong")
+print("xiaozhong:名字", yuser.name)
+xuser = Xuser(name="_xiao")
+print("_xiao:名字", xuser.name)

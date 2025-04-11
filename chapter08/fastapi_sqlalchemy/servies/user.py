@@ -1,10 +1,10 @@
 #!/usr/bin/evn python
 # coding=utf-8
 
-from sqlalchemy import select,update,delete
+from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.user import User
-from db.database import async_engine,Base
+from db.database import async_engine, Base
 
 
 class UserServeries:
@@ -17,28 +17,17 @@ class UserServeries:
 
     @staticmethod
     async def get_user(async_session: AsyncSession, user_id: int):
-        result = await async_session.execute(
-            select(User)
-                .where(User.id == user_id)
-        )
+        result = await async_session.execute(select(User).where(User.id == user_id))
         return result.scalars().first()
 
     @staticmethod
     async def get_user_by_name(async_session: AsyncSession, name: str):
-        result = await async_session.execute(
-            select(User)
-                .where(User.name == name)
-        )
+        result = await async_session.execute(select(User).where(User.name == name))
         return result.scalars().first()
 
     @staticmethod
-    async def get_users(
-            async_session: AsyncSession, skip: int = 0, limit: int = 100
-    ):
-        result = await async_session.execute(
-            select(User)
-                .order_by(User.id)
-        )
+    async def get_users(async_session: AsyncSession, skip: int = 0, limit: int = 100):
+        result = await async_session.execute(select(User).order_by(User.id))
         return result.scalars().fetchall()
 
     @staticmethod
@@ -49,7 +38,7 @@ class UserServeries:
         return new_user
 
     @staticmethod
-    async def update_user(async_session: AsyncSession, user_id: int,**kwargs):
+    async def update_user(async_session: AsyncSession, user_id: int, **kwargs):
         response = update(User).where(User.id == user_id)
         result = await async_session.execute(response.values(**kwargs))
         await async_session.commit()

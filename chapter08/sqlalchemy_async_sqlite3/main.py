@@ -19,7 +19,7 @@ from sqlalchemy import Column, Integer, String
 
 class User(Base):
     # 指定本类映射到users表
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(20))
     nikename = Column(String(32))
@@ -38,7 +38,9 @@ import asyncio
 asyncio.run(init_create())
 
 # 创建异步会话查询
-SessionLocal = sessionmaker(bind=async_engine, expire_on_commit=False, class_=AsyncSession)
+SessionLocal = sessionmaker(
+    bind=async_engine, expire_on_commit=False, class_=AsyncSession
+)
 
 # 对模型类进行异步CRUD操作
 from sqlalchemy import select
@@ -46,18 +48,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def get_user(async_session: AsyncSession, user_id: int):
-    result = await async_session.execute(
-        select(User)
-            .where(User.id == user_id)
-    )
+    result = await async_session.execute(select(User).where(User.id == user_id))
     return result.scalars().first()
 
 
 async def get_user_by_name(async_session: AsyncSession, name: str):
-    result = await async_session.execute(
-        select(User)
-            .where(User.name == name)
-    )
+    result = await async_session.execute(select(User).where(User.name == name))
     return result.scalars().first()
 
 
@@ -83,12 +79,17 @@ import asyncio
 
 async def testrun():
     async_session = SessionLocal()
-    result = await create_user(async_session=async_session, name='xiaozhong', nikename='Zyx', email='zyx@123.com',
-                               password='123456')
+    result = await create_user(
+        async_session=async_session,
+        name="xiaozhong",
+        nikename="Zyx",
+        email="zyx@123.com",
+        password="123456",
+    )
     print(result.name)
     await async_session.close()
     async_session = SessionLocal()
-    result = await get_user_by_name(async_session=async_session, name='xiaozhong')
+    result = await get_user_by_name(async_session=async_session, name="xiaozhong")
     print(result.name)
     await async_session.close()
     async_session = SessionLocal()
@@ -101,12 +102,14 @@ async def testrun():
 
 asyncio.run(testrun())
 
-#=============================================================
-#=============================================================
-#=============================================================
-#=============================================================
+# =============================================================
+# =============================================================
+# =============================================================
+# =============================================================
 
 from contextlib import asynccontextmanager
+
+
 @asynccontextmanager
 async def get_db() -> AsyncGenerator:
     async_session = SessionLocal()
@@ -122,9 +125,16 @@ async def get_db() -> AsyncGenerator:
 
 async def testrun():
     async with get_db() as async_session:
-        result = await create_user(async_session=async_session, name='xiaozhong', nikename='Zyx', email='zyx@123.com',password='123456')
+        result = await create_user(
+            async_session=async_session,
+            name="xiaozhong",
+            nikename="Zyx",
+            email="zyx@123.com",
+            password="123456",
+        )
         print(result.name)
-        result = await get_user_by_name(async_session=async_session, name='xiaozhong')
+        result = await get_user_by_name(async_session=async_session, name="xiaozhong")
         print(result.name)
+
 
 asyncio.run(testrun())

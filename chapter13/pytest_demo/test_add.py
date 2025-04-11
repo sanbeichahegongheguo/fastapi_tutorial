@@ -4,7 +4,6 @@ from cast_helper import add
 
 class TestMyAddClass:
 
-
     def setup(self):
         print("setup前置条件")
 
@@ -23,5 +22,6 @@ class TestMyAddClass:
     def test_add_v2(self):
         assert 3 == 5
 
+
 if __name__ == "__main__":
-    pytest.main(['-q'])
+    pytest.main(["-q"])

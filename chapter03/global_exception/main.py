@@ -4,11 +4,13 @@
 from fastapi import FastAPI
 from starlette.responses import JSONResponse
 
+
 async def exception_not_found(request, exc):
-    return JSONResponse({
-        "code": exc.status_code,
-        "error": "没有定义这个请求地址"},
-        status_code=exc.status_code)
+    return JSONResponse(
+        {"code": exc.status_code, "error": "没有定义这个请求地址"},
+        status_code=exc.status_code,
+    )
+
 
 exception_handlers = {
     404: exception_not_found,
@@ -23,4 +25,4 @@ if __name__ == "__main__":
 
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)

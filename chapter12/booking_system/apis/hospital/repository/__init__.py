@@ -9,7 +9,10 @@ class HospitalServeries:
     @staticmethod
     async def get_hospital_info(async_session: AsyncSession, id: int):
         _result = await async_session.execute(
-            select(Hospitalinfo.name, Hospitalinfo.describe, Hospitalinfo.describeimages).where(Hospitalinfo.id == id))
+            select(
+                Hospitalinfo.name, Hospitalinfo.describe, Hospitalinfo.describeimages
+            ).where(Hospitalinfo.id == id)
+        )
         scalars_result = _result.first()
         # scalars_result = _result.scalars().first()
         return scalars_result

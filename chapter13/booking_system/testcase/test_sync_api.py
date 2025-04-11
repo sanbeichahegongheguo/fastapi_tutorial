@@ -34,15 +34,15 @@
 from fastapi.testclient import TestClient
 
 
-
-def test_hospitalinfo(client:TestClient):
-    res = client.get('/api/v1/hospital_info')
-    print('sdsd',res.text)
+def test_hospitalinfo(client: TestClient):
+    res = client.get("/api/v1/hospital_info")
+    print("sdsd", res.text)
     assert res.status_code == 200
     assert type(res.status_code) == int
 
-def test_doctorlist(client:TestClient):
-    res = client.get('/api/v1/doctor_list')
-    print('dsasd',res.text)
+
+def test_doctorlist(client: TestClient):
+    res = client.get("/api/v1/doctor_list")
+    print("dsasd", res.text)
     assert res.status_code == 200
     assert type(res.status_code) == int

@@ -8,13 +8,30 @@ async def redis_look():
     r = aioredis.from_url("redis://localhost", encoding="utf-8", decode_responses=True)
 
     # 定义获取锁对象，设置锁的超时时间
-    def get_lock(redis, lock_name, timeout=10,sleep=0.2,blocking_timeout=None,lock_class=Lock,thread_local=True):
-        return redis.lock(name=lock_name, timeout=timeout,sleep=sleep,blocking_timeout=blocking_timeout, lock_class=lock_class,thread_local=thread_local)
+    def get_lock(
+        redis,
+        lock_name,
+        timeout=10,
+        sleep=0.2,
+        blocking_timeout=None,
+        lock_class=Lock,
+        thread_local=True,
+    ):
+        return redis.lock(
+            name=lock_name,
+            timeout=timeout,
+            sleep=sleep,
+            blocking_timeout=blocking_timeout,
+            lock_class=lock_class,
+            thread_local=thread_local,
+        )
 
     # 实例化一个锁对象
-    lock = get_lock(redis=r, lock_name='xiaozhong')
+    lock = get_lock(redis=r, lock_name="xiaozhong")
     # 开始获取到锁对象blocking为Flase，则不再阻塞，直接返回结果
-    lock_acquire = await lock.acquire(blocking=False,)
+    lock_acquire = await lock.acquire(
+        blocking=False,
+    )
     if lock_acquire:
         # 开始上锁---
         is_locked = await lock.locked()

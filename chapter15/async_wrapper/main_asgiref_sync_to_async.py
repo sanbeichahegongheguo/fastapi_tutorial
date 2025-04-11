@@ -1,18 +1,18 @@
 import cProfile
 from functools import wraps
 
-from fastapi import FastAPI,Request
+from fastapi import FastAPI, Request
 
-from fastapi.responses import PlainTextResponse,HTMLResponse
+from fastapi.responses import PlainTextResponse, HTMLResponse
 from asgiref.sync import sync_to_async
 import requests
+
 # 定义我们的APP服务对象
 app = FastAPI()
 
+
 def getdata():
-    return requests.get('http://www.baidu.com').text
-
-
+    return requests.get("http://www.baidu.com").text
 
 
 def async_decorator_with_argument(time_to_eat):
@@ -25,23 +25,20 @@ def async_decorator_with_argument(time_to_eat):
         @wraps(func)
         async def wrapper(*args, **kwargs):
 
-
-
-
             print(time_to_eat)
             print(args)
             print(kwargs)
             return await func(*args, **kwargs)
-
 
         print("输出结果")
         return wrapper
 
     return actual_decorator
 
+
 @app.get("/get/access_token")
 # @async_decorator_with_argument(time_to_eat='555555')
-def access_token(request:Request,dsa:str):
+def access_token(request: Request, dsa: str):
     pr = cProfile.Profile()
     pr.enable()  # 开始收集性能分析数据
     # asds= await sync_to_async(func=getdata)()
@@ -56,6 +53,4 @@ if __name__ == "__main__":
 
     app_modeel_name = os.path.basename(__file__).replace(".py", "")
     print(app_modeel_name)
-    uvicorn.run(f"{app_modeel_name}:app", host='127.0.0.1',port=5667, reload=True)
-
-
+    uvicorn.run(f"{app_modeel_name}:app", host="127.0.0.1", port=5667, reload=True)

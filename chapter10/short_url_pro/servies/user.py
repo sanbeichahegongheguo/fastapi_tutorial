@@ -1,4 +1,4 @@
-from sqlalchemy import select, update, delete,func
+from sqlalchemy import select, update, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.model import User
@@ -21,7 +21,9 @@ class UserServeries:
 
     @staticmethod
     async def get_user_by_name(async_session: AsyncSession, username: str) -> User:
-        result = await async_session.execute(select(User).where(User.username == username))
+        result = await async_session.execute(
+            select(User).where(User.username == username)
+        )
         return result.scalars().first()
 
     @staticmethod
@@ -50,15 +52,19 @@ class UserServeries:
         return response
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import asyncio
 
     print(PasslibHelper.hash_password("123456"))
     from dependencies import get_db_session_asynccont
+
     async def create_admin_user():
         async with get_db_session_asynccont() as async_session:
-            await UserServeries.create_user(async_session, username="admin",
-                                            password=(PasslibHelper.hash_password("123456")),
-                                            created_at=func.now()
-                                            )
+            await UserServeries.create_user(
+                async_session,
+                username="admin",
+                password=(PasslibHelper.hash_password("123456")),
+                created_at=func.now(),
+            )
+
     asyncio.run(create_admin_user())

@@ -8,8 +8,17 @@ app = FastAPI()
 
 # app.add_middleware(CProfileMiddleware)
 # app.add_middleware(CProfileMiddleware, enable=True, print_each_request = True, strip_dirs = False, sort_by='cumulative')
-app.add_middleware(CProfileMiddleware, enable=True, server_app = app, filename='.prof', strip_dirs = False, sort_by='cumulative')
+app.add_middleware(
+    CProfileMiddleware,
+    enable=True,
+    server_app=app,
+    filename=".prof",
+    strip_dirs=False,
+    sort_by="cumulative",
+)
 import asyncio
+
+
 @app.get("/")
 async def main():
     def randomlist(n):
@@ -25,11 +34,10 @@ async def main():
     return {"message": "Hello World"}
 
 
-
 if __name__ == "__main__":
     import uvicorn
     import os
 
     app_modeel_name = os.path.basename(__file__).replace(".py", "")
     print(app_modeel_name)
-    uvicorn.run(f"{app_modeel_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_modeel_name}:app", host="127.0.0.1", reload=True)

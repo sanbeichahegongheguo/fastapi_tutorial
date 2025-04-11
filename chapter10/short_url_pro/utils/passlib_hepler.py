@@ -17,5 +17,6 @@ class PasslibHelper:
     def hash_password(password: str) -> str:
         return pwd_context.hash(password)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     print(PasslibHelper.hash_password("123456"))

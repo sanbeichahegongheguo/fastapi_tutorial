@@ -13,11 +13,12 @@ from faker import Faker
 
 from utils.room_connection_helper import RoomConnectionManager
 
-fake = Faker(locale='zh_CN')
+fake = Faker(locale="zh_CN")
 router_char = APIRouter(tags=["聊天室"])
 
 # 实例化房间连接管理类
 room = RoomConnectionManager()
+
 
 @router_char.get("/api/v1/room/online")
 def index():
@@ -36,7 +37,7 @@ class ChatRoomWebSocket(WebSocketEndpoint):
 
     async def curr_user_login_init(self, websocket):
 
-        token = websocket.query_params.get('token')
+        token = websocket.query_params.get("token")
         if not token:
             # 由于收到不符合约定的数据而断开连接. 这是一个通用状态码,
             await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
@@ -44,10 +45,12 @@ class ChatRoomWebSocket(WebSocketEndpoint):
         if not self.curr_user and token:
             payload = AuthToeknHelper.token_decode(token=token)
             # 解析token信息
-            phone_number = payload.get('phone_number')
-            username = payload.get('username')
+            phone_number = payload.get("phone_number")
+            username = payload.get("username")
             # 初始化当前连接用户信息
-            self.curr_user = User(phone_number=phone_number, username=username, websocket=websocket)
+            self.curr_user = User(
+                phone_number=phone_number, username=username, websocket=websocket
+            )
 
         if room.check_user_logic(self.curr_user):
             # 由于收到不符合约定的数据而断开连接. 这是一个通用状态码,

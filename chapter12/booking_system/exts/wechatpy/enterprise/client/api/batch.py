@@ -30,16 +30,16 @@ class WeChatBatch(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'batch/syncuser',
+            "batch/syncuser",
             data={
-                'media_id': media_id,
-                'to_invite': to_invite,
-                'callback': {
-                    'url': url,
-                    'token': token,
-                    'encodingaeskey': encoding_aes_key
-                }
-            }
+                "media_id": media_id,
+                "to_invite": to_invite,
+                "callback": {
+                    "url": url,
+                    "token": token,
+                    "encodingaeskey": encoding_aes_key,
+                },
+            },
         )
 
     def replace_user(self, url, token, encoding_aes_key, media_id, to_invite=True):
@@ -56,16 +56,16 @@ class WeChatBatch(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'batch/replaceuser',
+            "batch/replaceuser",
             data={
-                'media_id': media_id,
-                'to_invite': to_invite,
-                'callback': {
-                    'url': url,
-                    'token': token,
-                    'encodingaeskey': encoding_aes_key
-                }
-            }
+                "media_id": media_id,
+                "to_invite": to_invite,
+                "callback": {
+                    "url": url,
+                    "token": token,
+                    "encodingaeskey": encoding_aes_key,
+                },
+            },
         )
 
     def replace_party(self, url, token, encoding_aes_key, media_id):
@@ -81,15 +81,15 @@ class WeChatBatch(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'batch/replaceparty',
+            "batch/replaceparty",
             data={
-                'media_id': media_id,
-                'callback': {
-                    'url': url,
-                    'token': token,
-                    'encodingaeskey': encoding_aes_key
-                }
-            }
+                "media_id": media_id,
+                "callback": {
+                    "url": url,
+                    "token": token,
+                    "encodingaeskey": encoding_aes_key,
+                },
+            },
         )
 
     def get_result(self, job_id):
@@ -101,7 +101,7 @@ class WeChatBatch(BaseWeChatAPI):
         :param job_id: 异步任务id，最大长度为64字符
         :return: 返回的 JSON 数据包
         """
-        return self._get('batch/getresult', params={'jobid': job_id})
+        return self._get("batch/getresult", params={"jobid": job_id})
 
     def invite(self, user=None, party=None, tag=None):
         """
@@ -117,10 +117,18 @@ class WeChatBatch(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         data = optionaldict(user=user, party=party, tag=tag)
-        return self._post('batch/invite', data=data)
+        return self._post("batch/invite", data=data)
 
-    def invite_user(self, url, token, encoding_aes_key, user_ids=None,
-                    party_ids=None, tag_ids=None, invite_tips=None):
+    def invite_user(
+        self,
+        url,
+        token,
+        encoding_aes_key,
+        user_ids=None,
+        party_ids=None,
+        tag_ids=None,
+        invite_tips=None,
+    ):
         """
         邀请成员关注(deprecated)
         https://qydev.weixin.qq.com/wiki/index.php?title=异步任务接口
@@ -135,19 +143,19 @@ class WeChatBatch(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         data = optionaldict()
-        data['callback'] = {
-            'url': url,
-            'token': token,
-            'encodingaeskey': encoding_aes_key
+        data["callback"] = {
+            "url": url,
+            "token": token,
+            "encodingaeskey": encoding_aes_key,
         }
         if isinstance(user_ids, (tuple, list)):
-            user_ids = '|'.join(map(to_text, user_ids))
+            user_ids = "|".join(map(to_text, user_ids))
         if isinstance(party_ids, (tuple, list)):
-            party_ids = '|'.join(map(to_text, party_ids))
+            party_ids = "|".join(map(to_text, party_ids))
         if isinstance(tag_ids, (tuple, list)):
-            tag_ids = '|'.join(map(to_text, tag_ids))
-        data['touser'] = user_ids
-        data['toparty'] = party_ids
-        data['totag'] = tag_ids
-        data['invite_tips'] = invite_tips
-        return self._post('batch/inviteuser', data=data)
+            tag_ids = "|".join(map(to_text, tag_ids))
+        data["touser"] = user_ids
+        data["toparty"] = party_ids
+        data["totag"] = tag_ids
+        data["invite_tips"] = invite_tips
+        return self._post("batch/inviteuser", data=data)

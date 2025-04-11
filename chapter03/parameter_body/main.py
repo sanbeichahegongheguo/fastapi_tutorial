@@ -21,40 +21,40 @@ class Item(BaseModel):
 @app.post("/action/")
 def callback(item: Item):
     return {
-        'user_id': item.user_id,
-        'article_id': item.article_id,
-        'token': item.token,
-        'timestamp': item.timestamp
+        "user_id": item.user_id,
+        "article_id": item.article_id,
+        "token": item.token,
+        "timestamp": item.timestamp,
     }
 
 
 @app.post("/action/body")
 def callbackbody(
-        token: str = Body(...),
-        user_id: int = Body(..., gt=10),
-        timestamp: str = Body(...),
-        article_id: str = Body(default=None),
+    token: str = Body(...),
+    user_id: int = Body(..., gt=10),
+    timestamp: str = Body(...),
+    article_id: str = Body(default=None),
 ):
     return {
-        'user_id': user_id,
-        'article_id': article_id,
-        'token': token,
-        'timestamp': timestamp
+        "user_id": user_id,
+        "article_id": article_id,
+        "token": token,
+        "timestamp": timestamp,
     }
 
 
 @app.post("/action/body2")
 def callbackbody(
-        token: str = Body(default=None),
-        user_id: int = Body(default=None, gt=10),
-        timestamp: str = Body(default=None),
-        article_id: str = Body(default=None),
+    token: str = Body(default=None),
+    user_id: int = Body(default=None, gt=10),
+    timestamp: str = Body(default=None),
+    article_id: str = Body(default=None),
 ):
     return {
-        'user_id': user_id,
-        'article_id': article_id,
-        'token': token,
-        'timestamp': timestamp
+        "user_id": user_id,
+        "article_id": article_id,
+        "token": token,
+        "timestamp": timestamp,
     }
 
 
@@ -67,9 +67,7 @@ class Itement(BaseModel):
 
 @app.post("/action/body3")
 def callbackbody(item: Itement = Body(default=None, embed=False)):
-    return {
-        'body': item
-    }
+    return {"body": item}
 
 
 # =================
@@ -92,8 +90,7 @@ async def update_item1111(item: ItemUser, user: User):
 
 
 @app.put("/items/more")
-async def update_item(item: Item, user: User, importance: int = Body(..., gt=0)
-                      ):
+async def update_item(item: Item, user: User, importance: int = Body(..., gt=0)):
     results = {"item": item, "user": user, "importance": importance}
     return results
 
@@ -107,8 +104,7 @@ class ItemUser2(BaseModel):
 
 
 @app.put("/items/body4")
-async def update_item(item: ItemUser2, importance: int = Body(..., gt=0)
-                      ):
+async def update_item(item: ItemUser2, importance: int = Body(..., gt=0)):
     results = {"item": item, "user": item.user, "importance": importance}
     return results
 
@@ -136,4 +132,4 @@ if __name__ == "__main__":
 
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)

@@ -15,7 +15,7 @@ def take_up_time(func):
 
 async def request_async():
     async with aiohttp.ClientSession() as session:
-        async with session.get('https://www.baidu.com') as resp:
+        async with session.get("https://www.baidu.com") as resp:
             pass
 
 
@@ -29,5 +29,5 @@ def run():
     loop.run_until_complete(tasks)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

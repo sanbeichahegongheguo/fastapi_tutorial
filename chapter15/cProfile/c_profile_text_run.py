@@ -10,7 +10,5 @@ def randomlist(n):
     return lists
 
 
-
-
 if __name__ == "__main__":
     randomlist(20)

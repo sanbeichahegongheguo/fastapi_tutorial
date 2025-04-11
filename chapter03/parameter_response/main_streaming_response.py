@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from fastapi import FastAPI
-from starlette.responses import  HTMLResponse, RedirectResponse
+from starlette.responses import HTMLResponse, RedirectResponse
 from os import getcwd, path
 import cv2
 
@@ -14,6 +14,7 @@ CHUNK_SIZE = 1024 * 1024
 from pathlib import Path
 
 video_path = Path("big_buck_bunny.mp4")
+
 
 def read_in_chunks():
     # 读取视频位置
@@ -33,7 +34,10 @@ def read_in_chunks():
             # 设置播放帧的速度等待时间
             cv2.waitKey(1)
             # 迭代返回对应的数据帧
-            yield (b'--frame\r\n' b'Content-Type: image/jpeg/\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+            yield (
+                b"--frame\r\n"
+                b"Content-Type: image/jpeg/\r\n\r\n" + bytearray(encodedImage) + b"\r\n"
+            )
         else:
             break
     # 释放
@@ -43,11 +47,15 @@ def read_in_chunks():
 @app.get("/streamvideo")
 def main():
     # 迭代的方式返回流数据
-    return StreamingResponse(read_in_chunks(), media_type="multipart/x-mixed-replace;boundary=frame")
+    return StreamingResponse(
+        read_in_chunks(), media_type="multipart/x-mixed-replace;boundary=frame"
+    )
+
 
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)

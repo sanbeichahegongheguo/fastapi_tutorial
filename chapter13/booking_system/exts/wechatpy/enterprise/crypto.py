@@ -20,27 +20,10 @@ class WeChatCrypto(BaseWeChatCrypto):
         self.corp_id = corp_id
 
     def check_signature(self, signature, timestamp, nonce, echo_str):
-        return self._check_signature(
-            signature,
-            timestamp,
-            nonce,
-            echo_str,
-            PrpCrypto
-        )
+        return self._check_signature(signature, timestamp, nonce, echo_str, PrpCrypto)
 
     def encrypt_message(self, msg, nonce, timestamp=None):
-        return self._encrypt_message(
-            msg,
-            nonce,
-            timestamp,
-            PrpCrypto
-        )
+        return self._encrypt_message(msg, nonce, timestamp, PrpCrypto)
 
     def decrypt_message(self, msg, signature, timestamp, nonce):
-        return self._decrypt_message(
-            msg,
-            signature,
-            timestamp,
-            nonce,
-            PrpCrypto
-        )
+        return self._decrypt_message(msg, signature, timestamp, nonce, PrpCrypto)

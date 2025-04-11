@@ -26,12 +26,8 @@ class WeChatCustomService(BaseWeChatAPI):
         password = to_binary(password)
         password = hashlib.md5(password).hexdigest()
         return self._post(
-            'https://api.weixin.qq.com/customservice/kfaccount/add',
-            data={
-                'kf_account': account,
-                'nickname': nickname,
-                'password': password
-            }
+            "https://api.weixin.qq.com/customservice/kfaccount/add",
+            data={"kf_account": account, "nickname": nickname, "password": password},
         )
 
     def update_account(self, account, nickname, password):
@@ -48,12 +44,8 @@ class WeChatCustomService(BaseWeChatAPI):
         password = to_binary(password)
         password = hashlib.md5(password).hexdigest()
         return self._post(
-            'https://api.weixin.qq.com/customservice/kfaccount/update',
-            data={
-                'kf_account': account,
-                'nickname': nickname,
-                'password': password
-            }
+            "https://api.weixin.qq.com/customservice/kfaccount/update",
+            data={"kf_account": account, "nickname": nickname, "password": password},
         )
 
     def delete_account(self, account):
@@ -66,13 +58,12 @@ class WeChatCustomService(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         params_data = [
-            'access_token={0}'.format(quote(self.access_token)),
-            'kf_account={0}'.format(quote(to_binary(account), safe=b'/@')),
+            "access_token={0}".format(quote(self.access_token)),
+            "kf_account={0}".format(quote(to_binary(account), safe=b"/@")),
         ]
-        params = '&'.join(params_data)
+        params = "&".join(params_data)
         return self._get(
-            'https://api.weixin.qq.com/customservice/kfaccount/del',
-            params=params
+            "https://api.weixin.qq.com/customservice/kfaccount/del", params=params
         )
 
     def get_accounts(self):
@@ -84,8 +75,7 @@ class WeChatCustomService(BaseWeChatAPI):
         :return: 客服账号列表
         """
         res = self._get(
-            'customservice/getkflist',
-            result_processor=lambda x: x['kf_list']
+            "customservice/getkflist", result_processor=lambda x: x["kf_list"]
         )
         return res
 
@@ -100,13 +90,9 @@ class WeChatCustomService(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg',
-            params={
-                'kf_account': account
-            },
-            files={
-                'media': media_file
-            }
+            "https://api.weixin.qq.com/customservice/kfaccount/uploadheadimg",
+            params={"kf_account": account},
+            files={"media": media_file},
         )
 
     def get_online_accounts(self):
@@ -118,8 +104,8 @@ class WeChatCustomService(BaseWeChatAPI):
         :return: 客服接待信息列表
         """
         res = self._get(
-            'customservice/getonlinekflist',
-            result_processor=lambda x: x['kf_online_list']
+            "customservice/getonlinekflist",
+            result_processor=lambda x: x["kf_online_list"],
         )
         return res
 
@@ -134,14 +120,9 @@ class WeChatCustomService(BaseWeChatAPI):
         :param text: 附加信息，可选
         :return: 返回的 JSON 数据包
         """
-        data = optionaldict(
-            openid=openid,
-            kf_account=account,
-            text=text
-        )
+        data = optionaldict(openid=openid, kf_account=account, text=text)
         return self._post(
-            'https://api.weixin.qq.com/customservice/kfsession/create',
-            data=data
+            "https://api.weixin.qq.com/customservice/kfsession/create", data=data
         )
 
     def close_session(self, openid, account, text=None):
@@ -155,14 +136,9 @@ class WeChatCustomService(BaseWeChatAPI):
         :param text: 附加信息，可选
         :return: 返回的 JSON 数据包
         """
-        data = optionaldict(
-            openid=openid,
-            kf_account=account,
-            text=text
-        )
+        data = optionaldict(openid=openid, kf_account=account, text=text)
         return self._post(
-            'https://api.weixin.qq.com/customservice/kfsession/close',
-            data=data
+            "https://api.weixin.qq.com/customservice/kfsession/close", data=data
         )
 
     def get_session(self, openid):
@@ -175,8 +151,8 @@ class WeChatCustomService(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._get(
-            'https://api.weixin.qq.com/customservice/kfsession/getsession',
-            params={'openid': openid}
+            "https://api.weixin.qq.com/customservice/kfsession/getsession",
+            params={"openid": openid},
         )
 
     def get_session_list(self, account):
@@ -189,9 +165,9 @@ class WeChatCustomService(BaseWeChatAPI):
         :return: 客服的会话列表
         """
         res = self._get(
-            'https://api.weixin.qq.com/customservice/kfsession/getsessionlist',
-            params={'kf_account': account},
-            result_processor=lambda x: x['sessionlist']
+            "https://api.weixin.qq.com/customservice/kfsession/getsessionlist",
+            params={"kf_account": account},
+            result_processor=lambda x: x["sessionlist"],
         )
         return res
 
@@ -204,11 +180,10 @@ class WeChatCustomService(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._get(
-            'https://api.weixin.qq.com/customservice/kfsession/getwaitcase'
+            "https://api.weixin.qq.com/customservice/kfsession/getwaitcase"
         )
 
-    def get_records(self, start_time, end_time, msgid=1,
-                    number=10000):
+    def get_records(self, start_time, end_time, msgid=1, number=10000):
         """
         获取客服聊天记录
 
@@ -224,13 +199,13 @@ class WeChatCustomService(BaseWeChatAPI):
         if isinstance(end_time, datetime.datetime):
             end_time = time.mktime(end_time.timetuple())
         record_data = {
-            'starttime': int(start_time),
-            'endtime': int(end_time),
-            'msgid': msgid,
-            'number': number
+            "starttime": int(start_time),
+            "endtime": int(end_time),
+            "msgid": msgid,
+            "number": number,
         }
         res = self._post(
-            'https://api.weixin.qq.com/customservice/msgrecord/getmsglist',
+            "https://api.weixin.qq.com/customservice/msgrecord/getmsglist",
             data=record_data,
         )
         return res

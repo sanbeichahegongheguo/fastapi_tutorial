@@ -11,7 +11,9 @@ class Item(BaseModel):
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
         # 对当前__fields__重新进行排序
-        cls.__fields__ = {key: cls.__fields__[key] for key in sorted(cls.__fields__.keys())}
+        cls.__fields__ = {
+            key: cls.__fields__[key] for key in sorted(cls.__fields__.keys())
+        }
         return instance
 
     desc: Optional[str] = None
@@ -20,7 +22,7 @@ class Item(BaseModel):
     aname: str
 
 
-@app.post('/items/', response_model=Item)
+@app.post("/items/", response_model=Item)
 async def getitem(item: Item):
     return item
 

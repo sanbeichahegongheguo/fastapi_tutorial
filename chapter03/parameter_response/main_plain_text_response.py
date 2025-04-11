@@ -13,15 +13,18 @@ app = FastAPI()
 
 @app.post("/api/v1/text1/")
 async def index():
-    return 'ok'
+    return "ok"
+
 
 @app.post("/api/v1/text2/")
 async def index():
-    return PlainTextResponse(status_code=404, content='ok')
+    return PlainTextResponse(status_code=404, content="ok")
+
 
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)

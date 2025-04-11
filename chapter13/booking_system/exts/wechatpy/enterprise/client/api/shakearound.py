@@ -15,10 +15,5 @@ class WeChatShakeAround(BaseWeChatAPI):
         :param ticket: 摇周边业务的ticket，可在摇到的 URL 中得到，ticket 生效时间为30分钟
         :return: 设备及用户信息
         """
-        res = self._post(
-            'shakearound/getshakeinfo',
-            data={
-                'ticket': ticket
-            }
-        )
-        return res['data']
+        res = self._post("shakearound/getshakeinfo", data={"ticket": ticket})
+        return res["data"]

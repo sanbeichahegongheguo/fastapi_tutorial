@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    wechatpy.exceptions
-    ~~~~~~~~~~~~~~~~~~~~
+wechatpy.exceptions
+~~~~~~~~~~~~~~~~~~~~
 
-    Basic exceptions definition.
+Basic exceptions definition.
 
-    :copyright: (c) 2014 by messense.
-    :license: MIT, see LICENSE for more details.
+:copyright: (c) 2014 by messense.
+:license: MIT, see LICENSE for more details.
 """
 from __future__ import absolute_import, unicode_literals
 
@@ -27,9 +27,8 @@ class WeChatException(Exception):
         self.errmsg = errmsg
 
     def __str__(self):
-        _repr = 'Error code: {code}, message: {msg}'.format(
-            code=self.errcode,
-            msg=self.errmsg
+        _repr = "Error code: {code}, message: {msg}".format(
+            code=self.errcode, msg=self.errmsg
         )
         if six.PY2:
             return to_binary(_repr)
@@ -37,10 +36,8 @@ class WeChatException(Exception):
             return to_text(_repr)
 
     def __repr__(self):
-        _repr = '{klass}({code}, {msg})'.format(
-            klass=self.__class__.__name__,
-            code=self.errcode,
-            msg=self.errmsg
+        _repr = "{klass}({code}, {msg})".format(
+            klass=self.__class__.__name__, code=self.errcode, msg=self.errmsg
         )
         if six.PY2:
             return to_binary(_repr)
@@ -51,8 +48,7 @@ class WeChatException(Exception):
 class WeChatClientException(WeChatException):
     """WeChat API client exception class"""
 
-    def __init__(self, errcode, errmsg, client=None,
-                 request=None, response=None):
+    def __init__(self, errcode, errmsg, client=None, request=None, response=None):
         super(WeChatClientException, self).__init__(errcode, errmsg)
         self.client = client
         self.request = request
@@ -62,38 +58,49 @@ class WeChatClientException(WeChatException):
 class InvalidSignatureException(WeChatException):
     """Invalid signature exception class"""
 
-    def __init__(self, errcode=-40001, errmsg='Invalid signature'):
+    def __init__(self, errcode=-40001, errmsg="Invalid signature"):
         super(InvalidSignatureException, self).__init__(errcode, errmsg)
 
 
 class APILimitedException(WeChatClientException):
     """WeChat API call limited exception class"""
+
     pass
 
 
 class InvalidAppIdException(WeChatException):
     """Invalid app_id exception class"""
 
-    def __init__(self, errcode=-40005, errmsg='Invalid AppId'):
+    def __init__(self, errcode=-40005, errmsg="Invalid AppId"):
         super(InvalidAppIdException, self).__init__(errcode, errmsg)
 
 
 class WeChatOAuthException(WeChatClientException):
     """WeChat OAuth API exception class"""
+
     pass
 
 
 class WeChatComponentOAuthException(WeChatClientException):
     """WeChat Component OAuth API exception class"""
+
     pass
 
 
 class WeChatPayException(WeChatClientException):
     """WeChat Pay API exception class"""
 
-    def __init__(self, return_code, result_code=None, return_msg=None,
-                 errcode=None, errmsg=None, client=None,
-                 request=None, response=None):
+    def __init__(
+        self,
+        return_code,
+        result_code=None,
+        return_msg=None,
+        errcode=None,
+        errmsg=None,
+        client=None,
+        request=None,
+        response=None,
+    ):
         """
         :param return_code: 返回状态码
         :param result_code: 业务结果
@@ -102,11 +109,7 @@ class WeChatPayException(WeChatClientException):
         :param errmsg: 错误代码描述
         """
         super(WeChatPayException, self).__init__(
-            errcode,
-            errmsg,
-            client,
-            request,
-            response
+            errcode, errmsg, client, request, response
         )
         self.return_code = return_code
         self.result_code = result_code
@@ -114,27 +117,31 @@ class WeChatPayException(WeChatClientException):
 
     def __str__(self):
         if six.PY2:
-            return to_binary('Error code: {code}, message: {msg}. Pay Error code: {pay_code}, message: {pay_msg}'.format(
-                code=self.return_code,
-                msg=self.return_msg,
-                pay_code=self.errcode,
-                pay_msg=self.errmsg
-            ))
+            return to_binary(
+                "Error code: {code}, message: {msg}. Pay Error code: {pay_code}, message: {pay_msg}".format(
+                    code=self.return_code,
+                    msg=self.return_msg,
+                    pay_code=self.errcode,
+                    pay_msg=self.errmsg,
+                )
+            )
         else:
-            return to_text('Error code: {code}, message: {msg}. Pay Error code: {pay_code}, message: {pay_msg}'.format(
-                code=self.return_code,
-                msg=self.return_msg,
-                pay_code=self.errcode,
-                pay_msg=self.errmsg
-            ))
+            return to_text(
+                "Error code: {code}, message: {msg}. Pay Error code: {pay_code}, message: {pay_msg}".format(
+                    code=self.return_code,
+                    msg=self.return_msg,
+                    pay_code=self.errcode,
+                    pay_msg=self.errmsg,
+                )
+            )
 
     def __repr__(self):
-        _repr = '{klass}({code}, {msg}). Pay({pay_code}, {pay_msg})'.format(
+        _repr = "{klass}({code}, {msg}). Pay({pay_code}, {pay_msg})".format(
             klass=self.__class__.__name__,
             code=self.return_code,
             msg=self.return_msg,
             pay_code=self.errcode,
-            pay_msg=self.errmsg
+            pay_msg=self.errmsg,
         )
         if six.PY2:
             return to_binary(_repr)

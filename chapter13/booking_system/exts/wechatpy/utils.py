@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    wechatpy.utils
-    ~~~~~~~~~~~~~~~
+wechatpy.utils
+~~~~~~~~~~~~~~~
 
-    This module provides some useful utilities.
+This module provides some useful utilities.
 
-    :copyright: (c) 2014 by messense.
-    :license: MIT, see LICENSE for more details.
+:copyright: (c) 2014 by messense.
+:license: MIT, see LICENSE for more details.
 """
 from __future__ import absolute_import, unicode_literals
 import string
@@ -14,7 +14,7 @@ import random
 import hashlib
 
 try:
-    '''Use simplejson if we can, fallback to json otherwise.'''
+    """Use simplejson if we can, fallback to json otherwise."""
     import simplejson as json
 except ImportError:
     import json  # NOQA
@@ -24,8 +24,7 @@ import six.moves.urllib.parse as urlparse
 
 
 class ObjectDict(dict):
-    """Makes a dictionary behave like an object, with attribute-style access.
-    """
+    """Makes a dictionary behave like an object, with attribute-style access."""
 
     def __getattr__(self, key):
         if key in self:
@@ -39,7 +38,7 @@ class ObjectDict(dict):
 class WeChatSigner(object):
     """WeChat data signer"""
 
-    def __init__(self, delimiter=b''):
+    def __init__(self, delimiter=b""):
         self._data = []
         self._delimiter = to_binary(delimiter)
 
@@ -73,14 +72,14 @@ def check_signature(token, signature, timestamp, nonce):
         raise InvalidSignatureException()
 
 
-def to_text(value, encoding='utf-8'):
+def to_text(value, encoding="utf-8"):
     """Convert value to unicode, default encoding is utf-8
 
     :param value: Value to be converted
     :param encoding: Desired encoding
     """
     if not value:
-        return ''
+        return ""
     if isinstance(value, six.text_type):
         return value
     if isinstance(value, six.binary_type):
@@ -88,14 +87,14 @@ def to_text(value, encoding='utf-8'):
     return six.text_type(value)
 
 
-def to_binary(value, encoding='utf-8'):
+def to_binary(value, encoding="utf-8"):
     """Convert value to binary string, default encoding is utf-8
 
     :param value: Value to be converted
     :param encoding: Desired encoding
     """
     if not value:
-        return b''
+        return b""
     if isinstance(value, six.binary_type):
         return value
     if isinstance(value, six.text_type):
@@ -111,11 +110,13 @@ def timezone(zone):
     """
     try:
         import pytz
+
         return pytz.timezone(zone)
     except ImportError:
         pass
     try:
         from dateutil.tz import gettz
+
         return gettz(zone)
     except ImportError:
         return None
@@ -124,7 +125,7 @@ def timezone(zone):
 def random_string(length=16):
     rule = string.ascii_letters + string.digits
     rand_list = random.sample(rule, length)
-    return ''.join(rand_list)
+    return "".join(rand_list)
 
 
 def get_querystring(uri):

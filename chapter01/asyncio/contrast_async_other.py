@@ -19,7 +19,7 @@ def take_up_time(func):
 async def request_async():
     # 异步请求函数
     async with aiohttp.ClientSession() as session:
-        async with session.get('https://www.baidu.com') as resp:
+        async with session.get("https://www.baidu.com") as resp:
             pass
 
 
@@ -44,9 +44,10 @@ def main():
 
 
 import os
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # 需要注意需要在此处设置才可以运行
-    if os.name == 'nt':
+    if os.name == "nt":
         # 在Windows系统中设置事件循环策略，解决 "Event loop is closed" 错误
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     main()

@@ -6,7 +6,7 @@ from exts.responses.json_response import Success
 from ..api import router_hospital
 
 
-@router_hospital.get("/hospital_info", summary='获取医院信息')
+@router_hospital.get("/hospital_info", summary="获取医院信息")
 async def callbadk(db_session: AsyncSession = Depends(depends_get_db_session)):
     info = await HospitalServeries.get_hospital_info(db_session, id=1)
     return Success(result=info)

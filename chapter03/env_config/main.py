@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-        env_file_encoding = 'utf-8'
+        env_file_encoding = "utf-8"
 
     @validator("version", pre=True)
     def version_len_check(cls, v: str) -> Optional[str]:
@@ -22,9 +22,11 @@ class Settings(BaseSettings):
             return None
         return v
 
+
 @lru_cache()
 def get_settings():
     return Settings()
+
 
 settings = Settings()
 print(settings.debug)
@@ -32,7 +34,7 @@ print(settings.title)
 print(settings.description)
 print(settings.version)
 
-settings = Settings(_env_file='.env', _env_file_encoding='utf-8')
+settings = Settings(_env_file=".env", _env_file_encoding="utf-8")
 app = FastAPI(
     debug=settings.debug,
     title=settings.title,
@@ -44,6 +46,7 @@ app = FastAPI(
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)

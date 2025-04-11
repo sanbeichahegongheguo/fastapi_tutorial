@@ -7,7 +7,7 @@ import asyncio
 import datetime
 from faker import Faker
 
-fake = Faker(locale='zh_CN')
+fake = Faker(locale="zh_CN")
 
 
 class RoomConnectionManager:
@@ -33,25 +33,45 @@ class RoomConnectionManager:
 
     async def broadcast_system_room_update_userlist(self):
         # 循环调用用户里面的连接对象发送广播
-        user_online_list = [f"{user.username}({user.phone_number})" for userid, user in self._users_socket.items()]
+        user_online_list = [
+            f"{user.username}({user.phone_number})"
+            for userid, user in self._users_socket.items()
+        ]
         for userid, user in self._users_socket.items():
             await user.websocket.send_json(
-                {"type": "system_room_update_userlist", "data": {'users_list': user_online_list}})
+                {
+                    "type": "system_room_update_userlist",
+                    "data": {"users_list": user_online_list},
+                }
+            )
 
     async def broadcast_room_user_login(self, curr_user: User):
         # 循环调用用户里面的连接对象发送广播
         for userid, user in self._users_socket.items():
             # 广播当前登入的用户的信息
             await user.websocket.send_json(
-                {"type": "system_msg_user_login",
-                 "data": {'phone_number': self._users_socket[curr_user.phone_number].phone_number,
-                          'username': self._users_socket[curr_user.phone_number].username}})
+                {
+                    "type": "system_msg_user_login",
+                    "data": {
+                        "phone_number": self._users_socket[
+                            curr_user.phone_number
+                        ].phone_number,
+                        "username": self._users_socket[curr_user.phone_number].username,
+                    },
+                }
+            )
 
     async def broadcast_room_user_logout(self, leave_user):
         for userid, user in self._users_socket.items():
-            await user.websocket.send_json({"type": "system_msg_user_logout",
-                                            "data": {'phone_number': leave_user.phone_number,
-                                                     'username': leave_user.username}})
+            await user.websocket.send_json(
+                {
+                    "type": "system_msg_user_logout",
+                    "data": {
+                        "phone_number": leave_user.phone_number,
+                        "username": leave_user.username,
+                    },
+                }
+            )
 
     async def broadcast_user_send_message(self, leave_user: User, msg: str):
         for userid, user in self._users_socket.items():
@@ -61,6 +81,15 @@ class RoomConnectionManager:
             else:
                 sendmsg = f"{leave_user.username}说：{msg}"
             await user.websocket.send_json(
-                {"type": "user_send_msg",
-                 "data": {'phone_number': leave_user.phone_number, 'username': leave_user.username, "msg": sendmsg,
-                          "datetime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}})
+                {
+                    "type": "user_send_msg",
+                    "data": {
+                        "phone_number": leave_user.phone_number,
+                        "username": leave_user.username,
+                        "msg": sendmsg,
+                        "datetime": datetime.datetime.now().strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        ),
+                    },
+                }
+            )

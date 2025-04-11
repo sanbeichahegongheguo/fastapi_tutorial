@@ -23,11 +23,11 @@ class WeChatService(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'service/get_provider_token',
+            "service/get_provider_token",
             data={
-                'corpid': self._client.corp_id,
-                'provider_secret': provider_secret,
-            }
+                "corpid": self._client.corp_id,
+                "provider_secret": provider_secret,
+            },
         )
 
     def get_suite_token(self, suite_id, suite_secret, suite_ticket):
@@ -42,12 +42,12 @@ class WeChatService(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'service/get_suite_token',
+            "service/get_suite_token",
             data={
-                'suite_id': suite_id,
-                'suite_secret': suite_secret,
-                'suite_ticket': suite_ticket
-            }
+                "suite_id": suite_id,
+                "suite_secret": suite_secret,
+                "suite_ticket": suite_ticket,
+            },
         )
 
     def get_login_info(self, auth_code, provider_access_token=None):
@@ -62,16 +62,18 @@ class WeChatService(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'service/get_login_info',
+            "service/get_login_info",
             params={
-                'provider_access_token': provider_access_token,
+                "provider_access_token": provider_access_token,
             },
             data={
-                'auth_code': auth_code,
-            }
+                "auth_code": auth_code,
+            },
         )
 
-    def get_login_url(self, login_ticket, target, agentid=None, provider_access_token=None):
+    def get_login_url(
+        self, login_ticket, target, agentid=None, provider_access_token=None
+    ):
         """
         获取登录企业号官网的url
 
@@ -85,13 +87,13 @@ class WeChatService(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'service/get_login_url',
+            "service/get_login_url",
             params={
-                'provider_access_token': provider_access_token,
+                "provider_access_token": provider_access_token,
             },
             data={
-                'login_ticket': login_ticket,
-                'target': target,
-                'agentid': agentid,
-            }
+                "login_ticket": login_ticket,
+                "target": target,
+                "agentid": agentid,
+            },
         )

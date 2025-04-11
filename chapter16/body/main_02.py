@@ -31,9 +31,10 @@ class LogerMiddleware(BaseHTTPMiddleware):
         await self.set_body(request)
         # 需要在日志中间件里读取body数据
         _body = await request.body()
-        print("Loger中间件解析读取：消费request.body()",_body)
+        print("Loger中间件解析读取：消费request.body()", _body)
         response = await call_next(request)
         return response
+
 
 app.add_middleware(LogerMiddleware)
 
@@ -45,12 +46,10 @@ async def index(request: Request):
     return PlainTextResponse("消费request.body()！")
 
 
-
-
 if __name__ == "__main__":
     import uvicorn
     import os
 
     app_modeel_name = os.path.basename(__file__).replace(".py", "")
     print(app_modeel_name)
-    uvicorn.run(f"{app_modeel_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_modeel_name}:app", host="127.0.0.1", reload=True)

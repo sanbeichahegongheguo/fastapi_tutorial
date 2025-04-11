@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import AsyncGenerator
 from db.database import SessionLocal
 
+
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     db_session = None
     try:
@@ -11,7 +12,10 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     finally:
         await db_session.close()
 
+
 from contextlib import asynccontextmanager
+
+
 @asynccontextmanager
 async def get_db_session_asynccont() -> AsyncGenerator:
     async_session = SessionLocal()

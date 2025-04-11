@@ -12,6 +12,7 @@ async def startup_event():
     pass
     from db.database import async_engine, Base
     from models.model import User
+
     async def init_create_table():
         async with async_engine.begin() as conn:
             # await conn.run_sync(Base.metadata.drop_all)

@@ -17,13 +17,7 @@ class WeChatMedia(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            url='media/upload',
-            params={
-                'type': media_type
-            },
-            files={
-                'media': media_file
-            }
+            url="media/upload", params={"type": media_type}, files={"media": media_file}
         )
 
     def download(self, media_id):
@@ -36,12 +30,7 @@ class WeChatMedia(BaseWeChatAPI):
 
         :return: requests 的 Response 实例
         """
-        return self._get(
-            'media/get',
-            params={
-                'media_id': media_id
-            }
-        )
+        return self._get("media/get", params={"media_id": media_id})
 
     def get_url(self, media_id):
         """
@@ -51,13 +40,13 @@ class WeChatMedia(BaseWeChatAPI):
         :return: 临时素材下载地址
         """
         parts = (
-            'https://api.weixin.qq.com/cgi-bin/media/get',
-            '?access_token=',
+            "https://api.weixin.qq.com/cgi-bin/media/get",
+            "?access_token=",
             self.access_token,
-            '&media_id=',
-            media_id
+            "&media_id=",
+            media_id,
         )
-        return ''.join(parts)
+        return "".join(parts)
 
     def upload_video(self, media_id, title, description):
         """
@@ -72,12 +61,8 @@ class WeChatMedia(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            url='media/uploadvideo',
-            data={
-                'media_id': media_id,
-                'title': title,
-                'description': description
-            }
+            url="media/uploadvideo",
+            data={"media_id": media_id, "title": title, "description": description},
         )
 
     def upload_articles(self, articles):
@@ -91,21 +76,18 @@ class WeChatMedia(BaseWeChatAPI):
         """
         articles_data = []
         for article in articles:
-            articles_data.append({
-                'thumb_media_id': article['thumb_media_id'],
-                'title': article['title'],
-                'content': article['content'],
-                'author': article.get('author', ''),
-                'content_source_url': article.get('content_source_url', ''),
-                'digest': article.get('digest', ''),
-                'show_cover_pic': article.get('show_cover_pic', 0)
-            })
-        return self._post(
-            'media/uploadnews',
-            data={
-                'articles': articles_data
-            }
-        )
+            articles_data.append(
+                {
+                    "thumb_media_id": article["thumb_media_id"],
+                    "title": article["title"],
+                    "content": article["content"],
+                    "author": article.get("author", ""),
+                    "content_source_url": article.get("content_source_url", ""),
+                    "digest": article.get("digest", ""),
+                    "show_cover_pic": article.get("show_cover_pic", 0),
+                }
+            )
+        return self._post("media/uploadnews", data={"articles": articles_data})
 
     def upload_image(self, media_file):
         """
@@ -117,11 +99,9 @@ class WeChatMedia(BaseWeChatAPI):
         :return: 上传成功时返回图片 URL
         """
         res = self._post(
-            url='media/uploadimg',
-            files={
-                'media': media_file
-            },
-            result_processor=lambda x: x['url']
+            url="media/uploadimg",
+            files={"media": media_file},
+            result_processor=lambda x: x["url"],
         )
         return res
 

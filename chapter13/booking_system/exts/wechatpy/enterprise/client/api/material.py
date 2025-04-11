@@ -19,22 +19,19 @@ class WeChatMaterial(BaseWeChatAPI):
         """
         articles_data = []
         for article in articles:
-            articles_data.append({
-                'thumb_media_id': article['thumb_media_id'],
-                'title': article['title'],
-                'content': article['content'],
-                'author': article.get('author', ''),
-                'content_source_url': article.get('content_source_url', ''),
-                'digest': article.get('digest', ''),
-                'show_cover_pic': article.get('show_cover_pic', 0)
-            })
-        return self._post(
-            'material/add_mpnews',
-            data={
-                "mpnews": {
-                    "articles": articles_data
+            articles_data.append(
+                {
+                    "thumb_media_id": article["thumb_media_id"],
+                    "title": article["title"],
+                    "content": article["content"],
+                    "author": article.get("author", ""),
+                    "content_source_url": article.get("content_source_url", ""),
+                    "digest": article.get("digest", ""),
+                    "show_cover_pic": article.get("show_cover_pic", 0),
                 }
-            }
+            )
+        return self._post(
+            "material/add_mpnews", data={"mpnews": {"articles": articles_data}}
         )
 
     def add(self, agent_id, media_type, media_file):
@@ -49,15 +46,11 @@ class WeChatMaterial(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         params = {
-            'agentid': agent_id,
-            'type': media_type,
+            "agentid": agent_id,
+            "type": media_type,
         }
         return self._post(
-            url='material/add_material',
-            params=params,
-            files={
-                'media': media_file
-            }
+            url="material/add_material", params=params, files={"media": media_file}
         )
 
     def get_url(self, agent_id, media_id):
@@ -71,15 +64,15 @@ class WeChatMaterial(BaseWeChatAPI):
         :return: 临时素材下载地址
         """
         parts = (
-            'https://qyapi.weixin.qq.com/cgi-bin/material/get',
-            '?access_token=',
+            "https://qyapi.weixin.qq.com/cgi-bin/material/get",
+            "?access_token=",
             self.access_token,
-            '&media_id=',
+            "&media_id=",
             media_id,
-            '&agentid=',
+            "&agentid=",
             agent_id,
         )
-        return ''.join(parts)
+        return "".join(parts)
 
     def get(self, agent_id, media_id):
         """
@@ -104,11 +97,11 @@ class WeChatMaterial(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._get(
-            'material/get',
+            "material/get",
             params={
-                'agentid': agent_id,
-                'media_id': media_id,
-            }
+                "agentid": agent_id,
+                "media_id": media_id,
+            },
         )
 
     def delete(self, agent_id, media_id):
@@ -122,11 +115,11 @@ class WeChatMaterial(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._get(
-            'material/del',
+            "material/del",
             params={
-                'agentid': agent_id,
-                'media_id': media_id,
-            }
+                "agentid": agent_id,
+                "media_id": media_id,
+            },
         )
 
     def update_articles(self, agent_id, media_id, articles):
@@ -142,22 +135,20 @@ class WeChatMaterial(BaseWeChatAPI):
         """
         articles_data = []
         for article in articles:
-            articles_data.append({
-                'thumb_media_id': article['thumb_media_id'],
-                'title': article['title'],
-                'content': article['content'],
-                'author': article.get('author', ''),
-                'content_source_url': article.get('content_source_url', ''),
-                'digest': article.get('digest', ''),
-                'show_cover_pic': article.get('show_cover_pic', 0)
-            })
+            articles_data.append(
+                {
+                    "thumb_media_id": article["thumb_media_id"],
+                    "title": article["title"],
+                    "content": article["content"],
+                    "author": article.get("author", ""),
+                    "content_source_url": article.get("content_source_url", ""),
+                    "digest": article.get("digest", ""),
+                    "show_cover_pic": article.get("show_cover_pic", 0),
+                }
+            )
         return self._post(
-            'material/update_news',
-            data={
-                'agentid': agent_id,
-                'media_id': media_id,
-                'articles': articles_data
-            }
+            "material/update_news",
+            data={"agentid": agent_id, "media_id": media_id, "articles": articles_data},
         )
 
     def get_count(self, agent_id):
@@ -170,10 +161,10 @@ class WeChatMaterial(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._get(
-            'material/get_count',
+            "material/get_count",
             params={
-                'agent_id': agent_id,
-            }
+                "agent_id": agent_id,
+            },
         )
 
     def batchget(self, agent_id, media_type, offset=0, count=20):
@@ -190,11 +181,11 @@ class WeChatMaterial(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'material/batchget',
+            "material/batchget",
             data={
-                'agent_id': agent_id,
-                'type': media_type,
-                'offset': offset,
-                'count': count
-            }
+                "agent_id": agent_id,
+                "type": media_type,
+                "offset": offset,
+                "count": count,
+            },
         )

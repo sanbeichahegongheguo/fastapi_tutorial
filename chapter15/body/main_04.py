@@ -20,9 +20,8 @@ app = FastAPI()
 
 class LogerMiddleware1:
     def __init__(
-            self,
-            app: ASGIApp,
-
+        self,
+        app: ASGIApp,
     ) -> None:
         self.app = app
 
@@ -45,9 +44,8 @@ class LogerMiddleware1:
 
 class LogerMiddleware2:
     def __init__(
-            self,
-            app: ASGIApp,
-
+        self,
+        app: ASGIApp,
     ) -> None:
         self.app = app
 
@@ -57,6 +55,7 @@ class LogerMiddleware2:
             return
         # 接收一次
         receive_ = await receive()
+
         async def receive():
             return receive_
 
@@ -71,13 +70,12 @@ class LogerMiddleware2:
 app.add_middleware(LogerMiddleware1)
 app.add_middleware(LogerMiddleware2)
 
+
 @app.get("/")
 async def index(request: Request):
     _body = await request.body()
     print("路由函数内容部读取：", _body)
     return PlainTextResponse("消费request.body()！")
-
-
 
 
 if __name__ == "__main__":
@@ -86,4 +84,4 @@ if __name__ == "__main__":
 
     app_modeel_name = os.path.basename(__file__).replace(".py", "")
     print(app_modeel_name)
-    uvicorn.run(f"{app_modeel_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_modeel_name}:app", host="127.0.0.1", reload=True)

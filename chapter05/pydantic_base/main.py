@@ -2,12 +2,18 @@
 # -*- coding: utf-8 -*-
 from typing import Union, Optional, List
 
-from pydantic import BaseModel, \
-    DirectoryPath, \
-    IPvAnyAddress, \
-    FilePath, \
-    EmailStr, \
-    NameEmail, SecretStr, SecretBytes, ValidationError, HttpUrl
+from pydantic import (
+    BaseModel,
+    DirectoryPath,
+    IPvAnyAddress,
+    FilePath,
+    EmailStr,
+    NameEmail,
+    SecretStr,
+    SecretBytes,
+    ValidationError,
+    HttpUrl,
+)
 from datetime import date
 
 
@@ -31,9 +37,9 @@ class Person(BaseModel):
     website: HttpUrl
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
-        user = Person(name='xiaozhong')
+        user = Person(name="xiaozhong")
     except ValidationError as e:
         print(e.errors())
         print(e.json())

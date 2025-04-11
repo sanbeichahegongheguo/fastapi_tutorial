@@ -22,15 +22,15 @@ class TokenUtils:
 
 
 data = {
-    'iss ': "xiaozhong",
-    'sub': 'xiaozhongtongxue',
-    'name': 'superadmin',
-    'admin': True,
-    'exp': datetime.utcnow() + timedelta(minutes=15)
+    "iss ": "xiaozhong",
+    "sub": "xiaozhongtongxue",
+    "name": "superadmin",
+    "admin": True,
+    "exp": datetime.utcnow() + timedelta(minutes=15),
 }
 
 
 token = TokenUtils.token_encode(data=data)
 print(token)
-payload = TokenUtils.token_decode(token =token)
+payload = TokenUtils.token_decode(token=token)
 print(payload)

@@ -13,21 +13,23 @@ app = FastAPI()
 
 @app.get("/get_request/")
 async def get_request(request: Request):
-    form_data= await request.form()
+    form_data = await request.form()
     body_data = await request.body()
     return {
-        'url':request.url,
-        'base_url': request.base_url,
-        'client_host ': request.client.host,
-        'query_params': request.query_params,
-        'json_data':await request.json() if body_data else None,
-        'form_data':form_data,
-        'body_data': body_data,
+        "url": request.url,
+        "base_url": request.base_url,
+        "client_host ": request.client.host,
+        "query_params": request.query_params,
+        "json_data": await request.json() if body_data else None,
+        "form_data": form_data,
+        "body_data": body_data,
     }
+
 
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)

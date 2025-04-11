@@ -10,27 +10,43 @@ from fastapi import FastAPI
 
 class PluginBase(abc.ABC):
 
-    def __init__(self,app: fastapi.FastAPI = None,config: pydantic.BaseSettings = None):
+    def __init__(
+        self, app: fastapi.FastAPI = None, config: pydantic.BaseSettings = None
+    ):
         if app is not None:
             self.init_app(app)
 
     @abc.abstractmethod
-    def init_app(self,app: fastapi.FastAPI,config: pydantic.BaseSettings = None,*args,**kwargs) -> None:
-        raise NotImplementedError('需要实现初始化')
-
+    def init_app(
+        self,
+        app: fastapi.FastAPI,
+        config: pydantic.BaseSettings = None,
+        *args,
+        **kwargs
+    ) -> None:
+        raise NotImplementedError("需要实现初始化")
 
 
 class HookPluginClient(PluginBase):
     # 设置插件默认的参数信息
-    def __init__(self,
-                 on_before_request: typing.Sequence[typing.Callable] = None,
-                 on_after_request: typing.Sequence[typing.Callable] = None,
-                 on_teardown_appcontext: typing.Sequence[typing.Callable] = None,
-                 *args, **kwargs):
+    def __init__(
+        self,
+        on_before_request: typing.Sequence[typing.Callable] = None,
+        on_after_request: typing.Sequence[typing.Callable] = None,
+        on_teardown_appcontext: typing.Sequence[typing.Callable] = None,
+        *args,
+        **kwargs
+    ):
         super().__init__(*args, **kwargs)
-        self.on_before_request = [] if on_before_request is None else list(on_before_request)
-        self.on_after_request = [] if on_after_request is None else list(on_after_request)
-        self.on_teardown_appcontext = [] if on_teardown_appcontext is None else list(on_teardown_appcontext)
+        self.on_before_request = (
+            [] if on_before_request is None else list(on_before_request)
+        )
+        self.on_after_request = (
+            [] if on_after_request is None else list(on_after_request)
+        )
+        self.on_teardown_appcontext = (
+            [] if on_teardown_appcontext is None else list(on_teardown_appcontext)
+        )
 
     def init_app(self, app: FastAPI, *args, **kwargs):
         @app.middleware("http")

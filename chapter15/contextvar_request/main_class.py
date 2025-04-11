@@ -19,20 +19,17 @@ async def add_process_time_header(request: Request, call_next):
         request_var.reset(token)
 
 
-
-
-@app.post('/index')
+@app.post("/index")
 async def index():
     # 这里应该使用事务处理
     print(request.headers)
-    return JSONResponse({
-        "code": 200,
-        "msg": "成功"
-    })
+    return JSONResponse({"code": 200, "msg": "成功"})
+
 
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_modeel_name = os.path.basename(__file__).replace(".py", "")
     print(app_modeel_name)
-    uvicorn.run(f"{app_modeel_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_modeel_name}:app", host="127.0.0.1", reload=True)

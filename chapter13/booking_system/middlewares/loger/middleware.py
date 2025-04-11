@@ -15,87 +15,107 @@ request_var: ContextVar[Request] = ContextVar("request")
 request: Request = bind_contextvar(request_var)
 
 
-
-
 def setup_ext_loguru(log_pro_path: str = None):
-    '''
+    """
     :param pro_path:  当前需要生产的日志文件的存在路径
     :return:
-    '''
+    """
     import os
+
     if not log_pro_path:
         log_pro_path = os.path.split(os.path.realpath(__file__))[0]
     # 定义info_log文件名称
-    log_file_path = os.path.join(log_pro_path, 'log/info_{time:YYYYMMDD}.log')
+    log_file_path = os.path.join(log_pro_path, "log/info_{time:YYYYMMDD}.log")
     # 定义err_log文件名称
-    err_log_file_path = os.path.join(log_pro_path, 'log/error_{time:YYYYMMDD}.log')
+    err_log_file_path = os.path.join(log_pro_path, "log/error_{time:YYYYMMDD}.log")
 
     from sys import stdout
-    LOGURU_FORMAT: str = '<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <16}</level> | <bold>{message}</bold>'
+
+    LOGURU_FORMAT: str = (
+        "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <16}</level> | <bold>{message}</bold>"
+    )
     # 这句话很关键避免多次的写入我们的日志
-    logger.configure(handlers=[{'sink': stdout, 'format': LOGURU_FORMAT}])
+    logger.configure(handlers=[{"sink": stdout, "format": LOGURU_FORMAT}])
     # 这个也可以启动避免多次的写入的作用，但是我们的 app:register_logger:40 -无法输出
     # logger.remove()
     # 错误日志不需要压缩
     format = " {time:YYYY-MM-DD HH:mm:ss:SSS} | thread_id:{thread.id} thread_name:{thread.name} | {level} |\n {message}"
     # 使用 rotation 参数实现定时创建 log 文件,可以实现每天 0 点新创建一个 log 文件输出了 enqueue=True表示 开启异步写入
-    logger.add(err_log_file_path, format=format, rotation='00:00', encoding='utf-8', level='ERROR', enqueue=True)  # Automatically rotate too big file
+    logger.add(
+        err_log_file_path,
+        format=format,
+        rotation="00:00",
+        encoding="utf-8",
+        level="ERROR",
+        enqueue=True,
+    )  # Automatically rotate too big file
     # 对应不同的格式
     format2 = " {time:YYYY-MM-DD HH:mm:ss:SSS} | thread_id:{thread.id} thread_name:{thread.name} | {level} | {message}"
     # 使用 rotation 参数实现定时创建 log 文件,可以实现每天 0 点新创建一个 log 文件输出了 enqueue=True表示 开启异步写入
-    logger.add(log_file_path, format=format2, rotation='00:00', encoding='utf-8', level='INFO', enqueue=True)  # Automatically rotate too big file
+    logger.add(
+        log_file_path,
+        format=format2,
+        rotation="00:00",
+        encoding="utf-8",
+        level="INFO",
+        enqueue=True,
+    )  # Automatically rotate too big file
 
 
-
-async def async_trace_add_log_record(event_type='', msg={}, remarks=''):
-    '''
+async def async_trace_add_log_record(event_type="", msg={}, remarks=""):
+    """
 
     :param event_type: 日志记录事件描述
     :param msg: 日志记录信息字典
     :param remarks: 日志备注信息
     :return:
-    '''
+    """
     # 如果没有这个标记的属性的，说明这个接口的不需要记录啦！
-    if request and hasattr(request.state, 'traceid'):
+    if request and hasattr(request.state, "traceid"):
         # 自增编号索引序
-        trace_links_index = request.state.trace_links_index = getattr(request.state, 'trace_links_index') + 1
+        trace_links_index = request.state.trace_links_index = (
+            getattr(request.state, "trace_links_index") + 1
+        )
         log = {
             # 自定义一个新的参数复制到我们的请求上下文的对象中
-            'traceid': getattr(request.state, 'traceid'),
+            "traceid": getattr(request.state, "traceid"),
             # 定义链路所以序号
-            'trace_index': trace_links_index,
+            "trace_index": trace_links_index,
             # 时间类型描述描述
-            'event_type': event_type,
+            "event_type": event_type,
             # 日志内容详情
-            'msg': msg,
+            "msg": msg,
             # 日志备注信息
-            'remarks': remarks,
-
+            "remarks": remarks,
         }
         #  为少少相关记录，删除不必要的为空的日志内容信息，
         if not remarks:
-            log.pop('remarks')
+            log.pop("remarks")
         if not msg:
-            log.pop('msg')
+            log.pop("msg")
         try:
             log_msg = json_helper.dict_to_json_ensure_ascii(log)  # 返回文本
             logger.info(log_msg)
         except:
-            logger.info(getattr(request.state, 'traceid') + '：索引：' + str(getattr(request.state, 'trace_links_index')) + ':日志信息写入异常')
-
+            logger.info(
+                getattr(request.state, "traceid")
+                + "：索引："
+                + str(getattr(request.state, "trace_links_index"))
+                + ":日志信息写入异常"
+            )
 
 
 class LogerMiddleware:
 
     def __init__(
-            self,
-            *,
-            app: ASGIApp,
-            log_pro_path: str,
-            is_record_useragent=False,
-            is_record_headers=False,
-            nesss_access_heads_keys=[],
-            ignore_url: typing.List = ['/favicon.ico', 'websocket'],
+        self,
+        *,
+        app: ASGIApp,
+        log_pro_path: str,
+        is_record_useragent=False,
+        is_record_headers=False,
+        nesss_access_heads_keys=[],
+        ignore_url: typing.List = ["/favicon.ico", "websocket"],
     ) -> None:
         self.app = app
         self.is_record_useragent = is_record_useragent
@@ -105,11 +125,11 @@ class LogerMiddleware:
         setup_ext_loguru(log_pro_path)
 
     def make_traceid(self, request) -> None:
-        '''
+        """
         生成追踪链路ID
         :param request:
         :return:
-        '''
+        """
         request.state.traceid = shortuuid.uuid()
         # 追踪索引序号
         request.state.trace_links_index = 0
@@ -119,21 +139,20 @@ class LogerMiddleware:
         request.state.start_time = perf_counter()
 
     def make_token_request(self, request):
-        '''
+        """
         生成当前请求上下文对象request
         :param request:
         :return:
-        '''
+        """
         return request_var.set(request)
 
     def reset_token_request(self, token_request):
-        '''
+        """
         重置当前请求上下文对象request
         :param request:
         :return:
-        '''
+        """
         request_var.reset(token_request)
-
 
     async def get_request_body(self, request) -> typing.AnyStr:
         body = None
@@ -141,14 +160,14 @@ class LogerMiddleware:
             body_bytes = await request.body()
             if body_bytes:
                 try:
-                    body = await  request.json()
+                    body = await request.json()
                 except:
                     pass
                     if body_bytes:
                         try:
-                            body = body_bytes.decode('utf-8')
+                            body = body_bytes.decode("utf-8")
                         except:
-                            body = body_bytes.decode('gb2312')
+                            body = body_bytes.decode("gb2312")
         except:
             pass
         request.state.body = body
@@ -189,76 +208,101 @@ class LogerMiddleware:
                 os_major, os_minor = 0, 0
 
             log_msg = {
-                'headers': None if not self.is_record_headers else
-                [request.headers.get(i, '') for i in
-                 self.nesss_access_heads_keys] if self.nesss_access_heads_keys else None,
+                "headers": (
+                    None
+                    if not self.is_record_headers
+                    else (
+                        [
+                            request.headers.get(i, "")
+                            for i in self.nesss_access_heads_keys
+                        ]
+                        if self.nesss_access_heads_keys
+                        else None
+                    )
+                ),
                 # 记录请求URL信息
-                "useragent": None if not self.is_record_useragent else
-                {
-                    "os": "{} {}".format(user_agent.os.family, user_agent.os.version_string),
-                    'browser': "{} {}".format(user_agent.browser.family, user_agent.browser.version_string),
-                    "device": {
-                        "family": user_agent.device.family,
-                        "brand": user_agent.device.brand,
-                        "model": user_agent.device.model,
+                "useragent": (
+                    None
+                    if not self.is_record_useragent
+                    else {
+                        "os": "{} {}".format(
+                            user_agent.os.family, user_agent.os.version_string
+                        ),
+                        "browser": "{} {}".format(
+                            user_agent.browser.family, user_agent.browser.version_string
+                        ),
+                        "device": {
+                            "family": user_agent.device.family,
+                            "brand": user_agent.device.brand,
+                            "model": user_agent.device.model,
+                        },
                     }
-                },
-                'url': url,
+                ),
+                "url": url,
                 # 记录请求方法
-                'method': method,
+                "method": method,
                 # 记录请求来源IP
-                'ip': ip,
+                "ip": ip,
                 # 'path': gziprequest.path,
                 # 记录请求提交的参数信息
-                'params': {
-                    'query_params': parse_qs(str(request.query_params)),
-                    'from': body_form,
-                    'body': body
+                "params": {
+                    "query_params": parse_qs(str(request.query_params)),
+                    "from": body_form,
+                    "body": body,
                 },
-                "ts": f'{datetime.now():%Y-%m-%d %H:%M:%S%z}'
+                "ts": f"{datetime.now():%Y-%m-%d %H:%M:%S%z}",
             }
             # 对于没有的数据清除
-            if not log_msg['headers']:
-                log_msg.pop('headers')
-            if not log_msg['params']['query_params']:
-                log_msg['params'].pop('query_params')
-            if not log_msg['params']['from']:
-                log_msg['params'].pop('from')
-            if not log_msg['params']['body']:
-                log_msg['params'].pop('body')
+            if not log_msg["headers"]:
+                log_msg.pop("headers")
+            if not log_msg["params"]["query_params"]:
+                log_msg["params"].pop("query_params")
+            if not log_msg["params"]["from"]:
+                log_msg["params"].pop("from")
+            if not log_msg["params"]["body"]:
+                log_msg["params"].pop("body")
         except:
             log_msg = {
-                'headers': None if not self.is_record_headers else
-                [request.headers.get(i, '') for i in
-                 self.nesss_access_heads_keys] if self.nesss_access_heads_keys else None,
-                'url': url,
-                'method': method,
-                'ip': ip,
-                'params': {
-                    'query_params': parse_qs(str(request.query_params)),
-                    'from': body_form,
-                    'body': body
+                "headers": (
+                    None
+                    if not self.is_record_headers
+                    else (
+                        [
+                            request.headers.get(i, "")
+                            for i in self.nesss_access_heads_keys
+                        ]
+                        if self.nesss_access_heads_keys
+                        else None
+                    )
+                ),
+                "url": url,
+                "method": method,
+                "ip": ip,
+                "params": {
+                    "query_params": parse_qs(str(request.query_params)),
+                    "from": body_form,
+                    "body": body,
                 },
-                "ts": f'{datetime.now():%Y-%m-%d %H:%M:%S%z}'
+                "ts": f"{datetime.now():%Y-%m-%d %H:%M:%S%z}",
             }
 
-        print('log_msg', log_msg)
+        print("log_msg", log_msg)
         # 对于没有的数据清除
-        if 'headers' in log_msg and not log_msg['headers']:
-            log_msg.pop('headers')
-        if log_msg['params']:
-            if 'query_params' in log_msg['params'] and not log_msg['params']['query_params']:
-                log_msg['params'].pop('query_params')
-            print(log_msg['params'])
-            if 'from' in log_msg['params'] and not log_msg['params']['from']:
-                log_msg['params'].pop('from')
-            if 'body' in log_msg['params'] and not log_msg['params']['body']:
-                log_msg['params'].pop('body')
+        if "headers" in log_msg and not log_msg["headers"]:
+            log_msg.pop("headers")
+        if log_msg["params"]:
+            if (
+                "query_params" in log_msg["params"]
+                and not log_msg["params"]["query_params"]
+            ):
+                log_msg["params"].pop("query_params")
+            print(log_msg["params"])
+            if "from" in log_msg["params"] and not log_msg["params"]["from"]:
+                log_msg["params"].pop("from")
+            if "body" in log_msg["params"] and not log_msg["params"]["body"]:
+                log_msg["params"].pop("body")
 
         return log_msg
-
-
-
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":  # pragma: no cover
@@ -284,9 +328,9 @@ class LogerMiddleware:
             # 生成日志记录
             log_msg = await self.make_request_log_msg(request)
             # 开始写日志信息到文件中
-            await async_trace_add_log_record(event_type='request', msg=log_msg)
+            await async_trace_add_log_record(event_type="request", msg=log_msg)
             try:
                 response = await self.app(scope, receive, send)
                 return response
             finally:
-               self.reset_token_request(token_request)
+                self.reset_token_request(token_request)

@@ -3,12 +3,13 @@ from fastapi import Request
 import shortuuid
 from exts.requestvar.bing import bind_contextvar
 from starlette.types import ASGIApp, Receive, Scope, Send
+
 request_var: ContextVar[Request] = ContextVar("request")
 request: Request = bind_contextvar(request_var)
 
+
 class BindContextvarMiddleware:
-    def __init__(
-            self, app: ASGIApp) -> None:
+    def __init__(self, app: ASGIApp) -> None:
         self.app = app
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:

@@ -35,7 +35,7 @@ class WeChatAppChat(BaseWeChatAPI):
             owner=owner,
             userlist=user_list,
         )
-        return self._post('appchat/create', data=data)
+        return self._post("appchat/create", data=data)
 
     def get(self, chat_id):
         """
@@ -47,11 +47,12 @@ class WeChatAppChat(BaseWeChatAPI):
         :param chat_id: 群聊id
         :return: 会话信息
         """
-        res = self._get('appchat/get', params={'chatid': chat_id})
-        return res['chat_info']
+        res = self._get("appchat/get", params={"chatid": chat_id})
+        return res["chat_info"]
 
-    def update(self, chat_id, name=None, owner=None,
-               add_user_list=None, del_user_list=None):
+    def update(
+        self, chat_id, name=None, owner=None, add_user_list=None, del_user_list=None
+    ):
         """
         修改群聊会话
 
@@ -72,7 +73,7 @@ class WeChatAppChat(BaseWeChatAPI):
             add_user_list=add_user_list,
             del_user_list=del_user_list,
         )
-        return self._post('appchat/update', data=data)
+        return self._post("appchat/update", data=data)
 
     def send(self, chat_id, msg_type, **kwargs):
         """
@@ -84,16 +85,13 @@ class WeChatAppChat(BaseWeChatAPI):
         :param kwargs: 具体消息类型的扩展参数
         :return:
         """
-        data = {
-            'chatid': chat_id,
-            'safe': kwargs.get('safe') or 0
-        }
+        data = {"chatid": chat_id, "safe": kwargs.get("safe") or 0}
         data.update(self._build_msg_content(msg_type, **kwargs))
 
-        return self._post('appchat/send', data=data)
+        return self._post("appchat/send", data=data)
 
     def send_msg(self, chat_id, msg_type, **kwargs):
-        """ deprecated, use `send` instead """
+        """deprecated, use `send` instead"""
         return self.send(chat_id, msg_type, **kwargs)
 
     def send_text(self, chat_id, content, safe=0):
@@ -107,9 +105,9 @@ class WeChatAppChat(BaseWeChatAPI):
         :param safe: 表示是否是保密消息，0表示否，1表示是，默认0
         :return:
         """
-        return self.send(chat_id, 'text', safe=safe, content=content)
+        return self.send(chat_id, "text", safe=safe, content=content)
 
-    def _build_msg_content(self, msgtype='text', **kwargs):
+    def _build_msg_content(self, msgtype="text", **kwargs):
         """
         构造消息内容
 
@@ -118,25 +116,25 @@ class WeChatAppChat(BaseWeChatAPI):
         :param kwargs: 具体消息类型的扩展参数
         :return:
         """
-        data = {'msgtype': msgtype}
-        if msgtype == 'text':
-            data[msgtype] = {'content': kwargs.get('content')}
-        elif msgtype == 'image' or msgtype == 'voice' or msgtype == 'file':
-            data[msgtype] = {'media_id': kwargs.get('media_id')}
-        elif msgtype == 'video':
+        data = {"msgtype": msgtype}
+        if msgtype == "text":
+            data[msgtype] = {"content": kwargs.get("content")}
+        elif msgtype == "image" or msgtype == "voice" or msgtype == "file":
+            data[msgtype] = {"media_id": kwargs.get("media_id")}
+        elif msgtype == "video":
             data[msgtype] = {
-                'media_id': kwargs.get('media_id'),
-                'title': kwargs.get('title'),
-                'description': kwargs.get('description')
+                "media_id": kwargs.get("media_id"),
+                "title": kwargs.get("title"),
+                "description": kwargs.get("description"),
             }
-        elif msgtype == 'textcard':
+        elif msgtype == "textcard":
             data[msgtype] = {
-                'title': kwargs.get('title'),
-                'description': kwargs.get('description'),
-                'url': kwargs.get('url'),
-                'btntxt': kwargs.get('btntxt'),
+                "title": kwargs.get("title"),
+                "description": kwargs.get("description"),
+                "url": kwargs.get("url"),
+                "btntxt": kwargs.get("btntxt"),
             }
-        elif msgtype == 'news':
+        elif msgtype == "news":
             # {
             #         "articles" :
             #         [
@@ -149,7 +147,7 @@ class WeChatAppChat(BaseWeChatAPI):
             #         ]
             #     }
             data[msgtype] = kwargs
-        elif msgtype == 'mpnews':
+        elif msgtype == "mpnews":
             # {
             #         "articles":[
             #             {
@@ -163,7 +161,7 @@ class WeChatAppChat(BaseWeChatAPI):
             #          ]
             #     }
             data[msgtype] = kwargs
-        elif msgtype == 'markdown':
+        elif msgtype == "markdown":
             #  {
             #         "content": "您的会议室已经预定，稍后会同步到`邮箱`
             #                 >**事项详情**
@@ -181,5 +179,5 @@ class WeChatAppChat(BaseWeChatAPI):
             #    }
             data[msgtype] = kwargs
         else:
-            raise TypeError('不能识别的msgtype: %s' % msgtype)
+            raise TypeError("不能识别的msgtype: %s" % msgtype)
         return data

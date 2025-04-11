@@ -16,8 +16,9 @@
 
 import pytest
 
+
 @pytest.mark.anyio
-@pytest.mark.parametrize('anyio_backend', ['asyncio'])
+@pytest.mark.parametrize("anyio_backend", ["asyncio"])
 async def test_doctor_list(async_client):
     res = await async_client.get("/api/v1/doctor_list")
     assert res.status_code == 200
@@ -25,7 +26,7 @@ async def test_doctor_list(async_client):
 
 
 @pytest.mark.anyio
-@pytest.mark.parametrize('anyio_backend', ['asyncio'])
+@pytest.mark.parametrize("anyio_backend", ["asyncio"])
 async def test_hospital_info(async_client):
     res = await async_client.get("/api/v1/hospital_info")
     assert res.status_code == 200

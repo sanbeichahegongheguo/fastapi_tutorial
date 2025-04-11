@@ -9,7 +9,7 @@ from fastapi import WebSocket, status
 from utils.room_connection_helper_distributed import RoomConnectionManager
 from faker import Faker
 
-fake = Faker(locale='zh_CN')
+fake = Faker(locale="zh_CN")
 router_char = APIRouter(tags=["聊天室"])
 
 
@@ -28,11 +28,10 @@ class ChatRoomWebSocket(WebSocketEndpoint):
         # 用户登入授权的token
         self.curr_user: Optional[UserDistribute] = None
 
-
-    async def curr_user_login_init(self, websocket:WebSocket):
+    async def curr_user_login_init(self, websocket: WebSocket):
         # 当前房间对象
 
-        token = websocket.query_params.get('token')
+        token = websocket.query_params.get("token")
 
         if not token:
             # 由于收到不符合约定的数据而断开连接. 这是一个通用状态码,
@@ -42,13 +41,17 @@ class ChatRoomWebSocket(WebSocketEndpoint):
                 AuthToeknHelper.token_decode(token)
                 payload = AuthToeknHelper.token_decode(token=token)
                 # 解析token信息
-                phone_number = payload.get('phone_number')
-                username = payload.get('username')
+                phone_number = payload.get("phone_number")
+                username = payload.get("username")
                 # 初始化当前连接用户信息
-                self.curr_user = UserDistribute(phone_number=phone_number, username=username)
+                self.curr_user = UserDistribute(
+                    phone_number=phone_number, username=username
+                )
             except:
                 pass
-                await self.close_clean_user_websocket(code=status.WS_1000_NORMAL_CLOSURE,websocket=websocket)
+                await self.close_clean_user_websocket(
+                    code=status.WS_1000_NORMAL_CLOSURE, websocket=websocket
+                )
 
         if self.room.check_user_logic(self.curr_user):
             # 由于收到不符合约定的数据而断开连接. 这是一个通用状态码,
@@ -62,7 +65,7 @@ class ChatRoomWebSocket(WebSocketEndpoint):
 
     async def on_connect(self, _websocket):
         # 初始化当前连接到服务端的用户信息
-        self.room =_websocket.app.state.room_connection
+        self.room = _websocket.app.state.room_connection
         # 确认链接
         await _websocket.accept()
         # 初始化当前用户信息
@@ -70,12 +73,12 @@ class ChatRoomWebSocket(WebSocketEndpoint):
         # 把用户加入到当前用户列表中，
         self.room.user_add_login_room(self.curr_user)
         # 把客户端连接添加到列表中
-        self.room.websocket_add_login_room(self.curr_user,_websocket)
+        self.room.websocket_add_login_room(self.curr_user, _websocket)
         # 添加连接
         # 广播用户加入聊天室的消息
         await self.room.pubsub_room_user_login(self.curr_user)
 
-    async def close_clean_user_websocket(self,code,websocket):
+    async def close_clean_user_websocket(self, code, websocket):
         # 资源释放处理
         await websocket.close(code=status.WS_1003_UNSUPPORTED_DATA)
         if self.room:
@@ -96,18 +99,20 @@ class ChatRoomWebSocket(WebSocketEndpoint):
         if self.curr_user is None:
             # 由于收到不符合约定的数据而断开连接. 这是一个通用状态码,
             # await _websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-            await self.close_clean_user_websocket(code=status.WS_1008_POLICY_VIOLATION,websocket=_websocket)
-
+            await self.close_clean_user_websocket(
+                code=status.WS_1008_POLICY_VIOLATION, websocket=_websocket
+            )
 
         if not isinstance(msg, str):
             # 由于接收到不允许的数据类型而断开连接 (如仅接收文本数据的终端接收到了二进制数据).
             # await _websocket.close(code=status.WS_1003_UNSUPPORTED_DATA)
-            await self.close_clean_user_websocket(code=status.WS_1003_UNSUPPORTED_DATA, websocket=_websocket)
+            await self.close_clean_user_websocket(
+                code=status.WS_1003_UNSUPPORTED_DATA, websocket=_websocket
+            )
 
         # 广播消息
-        await self.room.pubsub_user_send_message(self.curr_user,message=msg)
+        await self.room.pubsub_user_send_message(self.curr_user, message=msg)
         # await self.room.broadcast_user_send_message(self.curr_user, msg)
-
 
     async def on_disconnect(self, _websocket: WebSocket, _close_code: int):
         pass
@@ -118,11 +123,9 @@ class ChatRoomWebSocket(WebSocketEndpoint):
 
         await self.room.pubsub_room_user_logout(self.curr_user, message=None)
 
-
         # # 广播某用户退出房间的消息
         # await self.room.broadcast_room_user_logout(self.curr_user)
         # # 更新在线用户列表信息
         # await self.room.broadcast_system_room_update_userlist()
         # 删除引用
         del self.curr_user
-

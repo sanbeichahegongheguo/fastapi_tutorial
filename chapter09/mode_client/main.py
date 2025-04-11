@@ -15,8 +15,8 @@ from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN
 
 app = FastAPI(
     title="oauth2客户端模式",
-    description='oauth2客户端模式示例项目演示例子',
-    version='v1.1.0',
+    description="oauth2客户端模式示例项目演示例子",
+    version="v1.1.0",
 )
 
 # 阿里云云存储服务商维护的第三方客户端数据表信息
@@ -55,12 +55,12 @@ class TokenUtils:
 
 class OAuth2ClientCredentialsBearer(OAuth2):
     def __init__(
-            self,
-            tokenUrl: str,
-            scheme_name: Optional[str] = None,
-            scopes: Optional[Dict[str, str]] = None,
-            description: Optional[str] = None,
-            auto_error: bool = True,
+        self,
+        tokenUrl: str,
+        scheme_name: Optional[str] = None,
+        scopes: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
+        auto_error: bool = True,
     ):
         if not scopes:
             scopes = {}
@@ -92,19 +92,21 @@ class OAuth2ClientCredentialsBearer(OAuth2):
         return param
 
 
-oauth2_scheme = OAuth2ClientCredentialsBearer(tokenUrl="/oauth2/authorize",scheme_name="客户端模式",description="我是描述")
+oauth2_scheme = OAuth2ClientCredentialsBearer(
+    tokenUrl="/oauth2/authorize", scheme_name="客户端模式", description="我是描述"
+)
 
 
 class OAuth2ClientCredentialsRequestForm:
 
     def __init__(
-            self,
-            grant_type: str = Query(..., regex="client_credentials"),
-            scope: str = Query(""),
-            client_id: str = Query(...),
-            client_secret: str = Query(...),
-            username: Optional[str] = Query(None),
-            password: Optional[str] = Query(None),
+        self,
+        grant_type: str = Query(..., regex="client_credentials"),
+        scope: str = Query(""),
+        client_id: str = Query(...),
+        client_secret: str = Query(...),
+        username: Optional[str] = Query(None),
+        password: Optional[str] = Query(None),
     ):
         self.grant_type = grant_type
         self.scopes = scope.split()
@@ -120,49 +122,67 @@ async def authorize(client_data: OAuth2ClientCredentialsRequestForm = Depends())
         raise HTTPException(status_code=400, detail="请输入用户账号及密码等信息")
 
     if not client_data.client_id and not client_data.client_secret:
-        raise HTTPException(status_code=400, detail="请输入分配给第三方APPID及秘钥等信息")
+        raise HTTPException(
+            status_code=400, detail="请输入分配给第三方APPID及秘钥等信息"
+        )
 
     clientinfo = fake_client_db.get(client_data.client_id)
     if client_data.client_id not in fake_client_db:
-        raise HTTPException(status_code=400, detail="非法第三方客户端APPID", headers={"WWW-Authenticate": f"Bearer"})
+        raise HTTPException(
+            status_code=400,
+            detail="非法第三方客户端APPID",
+            headers={"WWW-Authenticate": f"Bearer"},
+        )
 
-    if client_data.client_secret != clientinfo.get('client_secret'):
+    if client_data.client_secret != clientinfo.get("client_secret"):
         raise HTTPException(status_code=400, detail="第三方客户端部秘钥不正确!")
     data = {
-        'iss ': 'client_id',
-        'sub': 'xiaozhongtongxue',
-        'client_id': client_data.client_id,
-        'exp': datetime.utcnow() + timedelta(minutes=15)
+        "iss ": "client_id",
+        "sub": "xiaozhongtongxue",
+        "client_id": client_data.client_id,
+        "exp": datetime.utcnow() + timedelta(minutes=15),
     }
     token = TokenUtils.token_encode(data=data)
-    return {"access_token": token, "token_type": "bearer","exires_in":159,"scope":"all"}
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "exires_in": 159,
+        "scope": "all",
+    }
 
 
 # 需要授权才可以
 @app.get("/get/clientinfo", summary="请求用户信息地址（受保护资源）")
 async def get_clientinfo(token: str = Depends(oauth2_scheme)):
-    '''
+    """
     定义API接口。改API接口需要token值并校验通过才可以访问
     :param token:
     :return:
-    '''
+    """
     payload = TokenUtils.token_decode(token=token)
     # 定义认证异常信息
-    client_id = payload.get('client_id')
+    client_id = payload.get("client_id")
     if client_id not in client_id:
-        raise HTTPException(status_code=400, detail="不存在client_id信息", headers={"WWW-Authenticate": f"Bearer"})
+        raise HTTPException(
+            status_code=400,
+            detail="不存在client_id信息",
+            headers={"WWW-Authenticate": f"Bearer"},
+        )
 
     clientinfo = fake_client_db.get(client_id)
 
-    return {'info': {
-        'client_id': clientinfo.get('client_id'),
-        'client_secret': clientinfo.get('client_secret')
-    }}
+    return {
+        "info": {
+            "client_id": clientinfo.get("client_id"),
+            "client_secret": clientinfo.get("client_secret"),
+        }
+    }
 
 
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_modeel_name = os.path.basename(__file__).replace(".py", "")
     print(app_modeel_name)
-    uvicorn.run(f"{app_modeel_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_modeel_name}:app", host="127.0.0.1", reload=True)

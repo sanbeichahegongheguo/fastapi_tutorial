@@ -21,4 +21,3 @@ def action_03():
     print("class-类型作用域-前置条件")
     yield
     print("class-类型作用域-后置条件")
-

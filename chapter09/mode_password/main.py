@@ -9,8 +9,8 @@ from datetime import datetime
 
 app = FastAPI(
     title="oauth2密码模式",
-    description='oauth2密码模式示例项目演示例子',
-    version='v1.1.0',
+    description="oauth2密码模式示例项目演示例子",
+    version="v1.1.0",
 )
 
 # 微信资源服务器上用户数据表信息
@@ -67,28 +67,38 @@ async def login(user_form_data: OAuth2PasswordRequestForm = Depends()):
         raise HTTPException(status_code=400, detail="请输入用户账号及密码等信息")
 
     if not user_form_data.client_id and not user_form_data.client_secret:
-        raise HTTPException(status_code=400, detail="请输入分配给第三方APPID及秘钥等信息")
+        raise HTTPException(
+            status_code=400, detail="请输入分配给第三方APPID及秘钥等信息"
+        )
 
     userinfo = fake_users_db.get(user_form_data.username)
     if user_form_data.username not in fake_users_db:
-        raise HTTPException(status_code=400, detail="不存在此用户信息", headers={"WWW-Authenticate": f"Bearer"})
+        raise HTTPException(
+            status_code=400,
+            detail="不存在此用户信息",
+            headers={"WWW-Authenticate": f"Bearer"},
+        )
 
-    if user_form_data.password != userinfo.get('password'):
+    if user_form_data.password != userinfo.get("password"):
         raise HTTPException(status_code=400, detail="用户密码不对")
 
     clientinfo = fake_client_db.get(user_form_data.client_id)
     if user_form_data.client_id not in fake_client_db:
-        raise HTTPException(status_code=400, detail="非法第三方客户端APPID", headers={"WWW-Authenticate": f"Bearer"})
+        raise HTTPException(
+            status_code=400,
+            detail="非法第三方客户端APPID",
+            headers={"WWW-Authenticate": f"Bearer"},
+        )
 
-    if user_form_data.client_secret != clientinfo.get('client_secret'):
+    if user_form_data.client_secret != clientinfo.get("client_secret"):
         raise HTTPException(status_code=400, detail="第三方客户端部秘钥不正确!")
 
     data = {
-        'iss ': user_form_data.username,
-        'sub': 'xiaozhongtongxue',
-        'username': user_form_data.username,
-        'admin': True,
-        'exp': datetime.utcnow() + timedelta(minutes=15)
+        "iss ": user_form_data.username,
+        "sub": "xiaozhongtongxue",
+        "username": user_form_data.username,
+        "admin": True,
+        "exp": datetime.utcnow() + timedelta(minutes=15),
     }
 
     token = TokenUtils.token_encode(data=data)
@@ -101,20 +111,23 @@ async def login(user_form_data: OAuth2PasswordRequestForm = Depends()):
 async def get_user_password(token: str = Depends(oauth2_scheme)):
     payload = TokenUtils.token_decode(token=token)
     # 定义认证异常信息
-    username = payload.get('username')
+    username = payload.get("username")
     if username not in fake_users_db:
-        raise HTTPException(status_code=400, detail="不存在此用户信息", headers={"WWW-Authenticate": f"Bearer"})
+        raise HTTPException(
+            status_code=400,
+            detail="不存在此用户信息",
+            headers={"WWW-Authenticate": f"Bearer"},
+        )
 
     userinfo = fake_users_db.get(username)
 
-    return {'info': {
-        'username': username,
-        'password': userinfo.get('password')
-    }}
+    return {"info": {"username": username, "password": userinfo.get("password")}}
+
 
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_modeel_name = os.path.basename(__file__).replace(".py", "")
     print(app_modeel_name)
-    uvicorn.run(f"{app_modeel_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_modeel_name}:app", host="127.0.0.1", reload=True)

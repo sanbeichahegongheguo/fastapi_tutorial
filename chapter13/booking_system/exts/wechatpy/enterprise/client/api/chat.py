@@ -27,13 +27,13 @@ class WeChatChat(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'chat/create',
+            "chat/create",
             data={
-                'chatid': chat_id,
-                'name': name,
-                'owner': owner,
-                'userlist': user_list,
-            }
+                "chatid": chat_id,
+                "name": name,
+                "owner": owner,
+                "userlist": user_list,
+            },
         )
 
     def get(self, chat_id):
@@ -46,11 +46,18 @@ class WeChatChat(BaseWeChatAPI):
         :param chat_id: 会话 ID
         :return: 会话信息
         """
-        res = self._get('chat/get', params={'chatid': chat_id})
-        return res['chat_info']
+        res = self._get("chat/get", params={"chatid": chat_id})
+        return res["chat_info"]
 
-    def update(self, chat_id, op_user, name=None, owner=None,
-               add_user_list=None, del_user_list=None):
+    def update(
+        self,
+        chat_id,
+        op_user,
+        name=None,
+        owner=None,
+        add_user_list=None,
+        del_user_list=None,
+    ):
         """
         修改会话
 
@@ -73,7 +80,7 @@ class WeChatChat(BaseWeChatAPI):
             add_user_list=add_user_list,
             del_user_list=del_user_list,
         )
-        return self._post('chat/update', data=data)
+        return self._post("chat/update", data=data)
 
     def quit(self, chat_id, op_user):
         """
@@ -87,11 +94,11 @@ class WeChatChat(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'chat/quit',
+            "chat/quit",
             data={
-                'chatid': chat_id,
-                'op_user': op_user,
-            }
+                "chatid": chat_id,
+                "op_user": op_user,
+            },
         )
 
     def clear_notify(self, op_user, type, id):
@@ -107,14 +114,14 @@ class WeChatChat(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'chat/clearnotify',
+            "chat/clearnotify",
             data={
-                'op_user': op_user,
-                'chat': {
-                    'type': type,
-                    'id': id,
-                }
-            }
+                "op_user": op_user,
+                "chat": {
+                    "type": type,
+                    "id": id,
+                },
+            },
         )
 
     def set_mute(self, user_mute_list):
@@ -127,10 +134,7 @@ class WeChatChat(BaseWeChatAPI):
         :param user_mute_list: 成员新消息免打扰参数，数组，最大支持10000个成员
         :return: 返回的 JSON 数据包
         """
-        return self._post(
-            'chat/setmute',
-            data={'user_mute_list': user_mute_list}
-        )
+        return self._post("chat/setmute", data={"user_mute_list": user_mute_list})
 
     def send_text(self, sender, receiver_type, receiver_id, content):
         """
@@ -146,17 +150,17 @@ class WeChatChat(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         data = {
-            'receiver': {
-                'type': receiver_type,
-                'id': receiver_id,
+            "receiver": {
+                "type": receiver_type,
+                "id": receiver_id,
             },
-            'sender': sender,
-            'msgtype': 'text',
-            'text': {
-                'content': content,
-            }
+            "sender": sender,
+            "msgtype": "text",
+            "text": {
+                "content": content,
+            },
         }
-        return self._post('chat/send', data=data)
+        return self._post("chat/send", data=data)
 
     def send_single_text(self, sender, receiver, content):
         """
@@ -167,7 +171,7 @@ class WeChatChat(BaseWeChatAPI):
         :param content: 消息内容
         :return: 返回的 JSON 数据包
         """
-        return self.send_text(sender, 'single', receiver, content)
+        return self.send_text(sender, "single", receiver, content)
 
     def send_group_text(self, sender, receiver, content):
         """
@@ -178,7 +182,7 @@ class WeChatChat(BaseWeChatAPI):
         :param content: 消息内容
         :return: 返回的 JSON 数据包
         """
-        return self.send_text(sender, 'group', receiver, content)
+        return self.send_text(sender, "group", receiver, content)
 
     def send_image(self, sender, receiver_type, receiver_id, media_id):
         """
@@ -194,17 +198,17 @@ class WeChatChat(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         data = {
-            'receiver': {
-                'type': receiver_type,
-                'id': receiver_id,
+            "receiver": {
+                "type": receiver_type,
+                "id": receiver_id,
             },
-            'sender': sender,
-            'msgtype': 'image',
-            'image': {
-                'media_id': media_id,
-            }
+            "sender": sender,
+            "msgtype": "image",
+            "image": {
+                "media_id": media_id,
+            },
         }
-        return self._post('chat/send', data=data)
+        return self._post("chat/send", data=data)
 
     def send_single_image(self, sender, receiver, media_id):
         """
@@ -215,7 +219,7 @@ class WeChatChat(BaseWeChatAPI):
         :param media_id: 图片媒体文件id，可以调用上传素材文件接口获取
         :return: 返回的 JSON 数据包
         """
-        return self.send_image(sender, 'single', receiver, media_id)
+        return self.send_image(sender, "single", receiver, media_id)
 
     def send_group_image(self, sender, receiver, media_id):
         """
@@ -226,7 +230,7 @@ class WeChatChat(BaseWeChatAPI):
         :param media_id: 图片媒体文件id，可以调用上传素材文件接口获取
         :return: 返回的 JSON 数据包
         """
-        return self.send_image(sender, 'group', receiver, media_id)
+        return self.send_image(sender, "group", receiver, media_id)
 
     def send_file(self, sender, receiver_type, receiver_id, media_id):
         """
@@ -242,17 +246,17 @@ class WeChatChat(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         data = {
-            'receiver': {
-                'type': receiver_type,
-                'id': receiver_id,
+            "receiver": {
+                "type": receiver_type,
+                "id": receiver_id,
             },
-            'sender': sender,
-            'msgtype': 'file',
-            'file': {
-                'media_id': media_id,
-            }
+            "sender": sender,
+            "msgtype": "file",
+            "file": {
+                "media_id": media_id,
+            },
         }
-        return self._post('chat/send', data=data)
+        return self._post("chat/send", data=data)
 
     def send_single_file(self, sender, receiver, media_id):
         """
@@ -263,7 +267,7 @@ class WeChatChat(BaseWeChatAPI):
         :param media_id: 文件id，可以调用上传素材文件接口获取, 文件须大于4字节
         :return: 返回的 JSON 数据包
         """
-        return self.send_file(sender, 'single', receiver, media_id)
+        return self.send_file(sender, "single", receiver, media_id)
 
     def send_group_file(self, sender, receiver, media_id):
         """
@@ -274,4 +278,4 @@ class WeChatChat(BaseWeChatAPI):
         :param media_id: 文件id，可以调用上传素材文件接口获取, 文件须大于4字节
         :return: 返回的 JSON 数据包
         """
-        return self.send_file(sender, 'group', receiver, media_id)
+        return self.send_file(sender, "group", receiver, media_id)

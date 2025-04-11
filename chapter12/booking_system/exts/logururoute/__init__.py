@@ -13,7 +13,7 @@
 
 from time import perf_counter
 from fastapi.routing import APIRoute
-from typing import Callable, List, Dict,Optional
+from typing import Callable, List, Dict, Optional
 from fastapi.responses import Response
 import shortuuid
 from datetime import datetime
@@ -28,7 +28,8 @@ from exts.logururoute.config import setup_ext_loguru
 from fastapi.responses import StreamingResponse
 from exts.requestvar import request
 
-__all__ = ("setup_ext_loguru",  "ContextLogerRoute")
+__all__ = ("setup_ext_loguru", "ContextLogerRoute")
+
 
 class ContextLogerRoute(APIRoute):
     # 再静态的里面使用self来查询也可以，遵循从内到外的查询
@@ -41,11 +42,15 @@ class ContextLogerRoute(APIRoute):
     def filter_request_url(self):
         path_info = request.url.path
         # 过滤不需要记录日志请求地址URL
-        return path_info not in ['/favicon.ico'] and 'websocket' not in path_info and request.method != 'OPTIONS'
+        return (
+            path_info not in ["/favicon.ico"]
+            and "websocket" not in path_info
+            and request.method != "OPTIONS"
+        )
 
-    def filter_response_context(self,response: Response):
+    def filter_response_context(self, response: Response):
         # 过滤不需要记录日志响应体内容信息L
-        return 'image' not in response.media_type and hasattr(request.state, 'traceid')
+        return "image" not in response.media_type and hasattr(request.state, "traceid")
 
     async def make_request_start_time(self):
         pass
@@ -55,7 +60,7 @@ class ContextLogerRoute(APIRoute):
             # 计算时间
             request.state.start_time = perf_counter()
 
-    async def make_request_log_msg(self)->Dict:
+    async def make_request_log_msg(self) -> Dict:
         log_msg = None
         if self.filter_request_url():
             ip, method, url = request.client.host, request.method, request.url.path
@@ -69,14 +74,14 @@ class ContextLogerRoute(APIRoute):
                 body_bytes = await request.body()
                 if body_bytes:
                     try:
-                        body = await  request.json()
+                        body = await request.json()
                     except:
                         pass
                         if body_bytes:
                             try:
-                                body = body_bytes.decode('utf-8')
+                                body = body_bytes.decode("utf-8")
                             except:
-                                body = body_bytes.decode('gb2312')
+                                body = body_bytes.decode("gb2312")
             except:
                 pass
             # 在这里记录下当前提交的body的数据，用于下文的提取
@@ -96,59 +101,75 @@ class ContextLogerRoute(APIRoute):
                 os_major, os_minor = 0, 0
 
             log_msg = {
-                'headers': None if not self.is_record_headers else
-                [request.headers.get(i, '') for i in
-                 self.nesss_access_heads_keys] if self.nesss_access_heads_keys else None,
+                "headers": (
+                    None
+                    if not self.is_record_headers
+                    else (
+                        [
+                            request.headers.get(i, "")
+                            for i in self.nesss_access_heads_keys
+                        ]
+                        if self.nesss_access_heads_keys
+                        else None
+                    )
+                ),
                 # 记录请求URL信息
-                "useragent": None if not self.is_record_useragent else
-                {
-                    "os": "{} {}".format(user_agent.os.family, user_agent.os.version_string),
-                    'browser': "{} {}".format(user_agent.browser.family, user_agent.browser.version_string),
-                    "device": {
-                        "family": user_agent.device.family,
-                        "brand": user_agent.device.brand,
-                        "model": user_agent.device.model,
+                "useragent": (
+                    None
+                    if not self.is_record_useragent
+                    else {
+                        "os": "{} {}".format(
+                            user_agent.os.family, user_agent.os.version_string
+                        ),
+                        "browser": "{} {}".format(
+                            user_agent.browser.family, user_agent.browser.version_string
+                        ),
+                        "device": {
+                            "family": user_agent.device.family,
+                            "brand": user_agent.device.brand,
+                            "model": user_agent.device.model,
+                        },
                     }
-                },
-                'url': url,
+                ),
+                "url": url,
                 # 记录请求方法
-                'method': method,
+                "method": method,
                 # 记录请求来源IP
-                'ip': ip,
+                "ip": ip,
                 # 'path': gziprequest.path,
                 # 记录请求提交的参数信息
-                'params': {
-                    'query_params': parse_qs(str(request.query_params)),
-                    'from': body_form,
-                    'body': body
+                "params": {
+                    "query_params": parse_qs(str(request.query_params)),
+                    "from": body_form,
+                    "body": body,
                 },
-                "ts": f'{datetime.now():%Y-%m-%d %H:%M:%S%z}'
+                "ts": f"{datetime.now():%Y-%m-%d %H:%M:%S%z}",
             }
             # 对于没有的数据清除
-            if not log_msg['headers']:
-                log_msg.pop('headers')
-            if not log_msg['params']['query_params']:
-                log_msg['params'].pop('query_params')
-            if not log_msg['params']['from']:
-                log_msg['params'].pop('from')
-            if not log_msg['params']['body']:
-                log_msg['params'].pop('body')
+            if not log_msg["headers"]:
+                log_msg.pop("headers")
+            if not log_msg["params"]["query_params"]:
+                log_msg["params"].pop("query_params")
+            if not log_msg["params"]["from"]:
+                log_msg["params"].pop("from")
+            if not log_msg["params"]["body"]:
+                log_msg["params"].pop("body")
 
         return log_msg
 
-    async def before_request_record_loger(self,log_msg=None):
+    async def before_request_record_loger(self, log_msg=None):
         if self.filter_request_url() and log_msg:
-            await async_trace_add_log_record(event_type='request', msg=log_msg)
+            await async_trace_add_log_record(event_type="request", msg=log_msg)
 
-    async def after_request_record_loger(self,  response: Response):
+    async def after_request_record_loger(self, response: Response):
         if self.filter_response_context(response=response):
-            start_time = getattr(request.state, 'start_time')
-            end_time = f'{(perf_counter() - start_time):.2f}'
+            start_time = getattr(request.state, "start_time")
+            end_time = f"{(perf_counter() - start_time):.2f}"
             # 获取响应报文信息内容
             rsp = None
             if not isinstance(response, StreamingResponse):
                 if isinstance(response, Response):
-                    rsp = str(response.body, encoding='utf-8')
+                    rsp = str(response.body, encoding="utf-8")
                     try:
                         rsp = json_helper.json_to_dict(rsp)
                     except:
@@ -156,12 +177,12 @@ class ContextLogerRoute(APIRoute):
                 log_msg = {
                     # 记录请求耗时
                     "status_code": response.status_code,
-                    'cost_time': end_time,
+                    "cost_time": end_time,
                     #  记录请求响应的最终报文信息--eval的作用是去除相关的 转义符号 "\"ok\""===》ok
-                    'rsp': rsp,
-                    "ts": f'{datetime.now():%Y-%m-%d %H:%M:%S%z}'
+                    "rsp": rsp,
+                    "ts": f"{datetime.now():%Y-%m-%d %H:%M:%S%z}",
                 }
-                await async_trace_add_log_record(event_type='response', msg=log_msg)
+                await async_trace_add_log_record(event_type="response", msg=log_msg)
 
     async def teardown_requestcontext(self, request: Request, response: Response):
         pass
@@ -192,44 +213,44 @@ class ContextLogerRoute(APIRoute):
         return custom_route_handler
 
 
-
-
-
-async def async_trace_add_log_record(event_type='', msg={}, remarks=''):
-    '''
+async def async_trace_add_log_record(event_type="", msg={}, remarks=""):
+    """
 
     :param event_type: 日志记录事件描述
     :param msg: 日志记录信息字典
     :param remarks: 日志备注信息
     :return:
-    '''
+    """
     # 如果没有这个标记的属性的，说明这个接口的不需要记录啦！
-    if request and hasattr(request.state, 'traceid'):
+    if request and hasattr(request.state, "traceid"):
         # 自增编号索引序
-        trace_links_index = request.state.trace_links_index = getattr(request.state, 'trace_links_index') + 1
+        trace_links_index = request.state.trace_links_index = (
+            getattr(request.state, "trace_links_index") + 1
+        )
         log = {
             # 自定义一个新的参数复制到我们的请求上下文的对象中
-            'traceid': getattr(request.state, 'traceid'),
+            "traceid": getattr(request.state, "traceid"),
             # 定义链路所以序号
-            'trace_index': trace_links_index,
+            "trace_index": trace_links_index,
             # 时间类型描述描述
-            'event_type': event_type,
+            "event_type": event_type,
             # 日志内容详情
-            'msg': msg,
+            "msg": msg,
             # 日志备注信息
-            'remarks': remarks,
+            "remarks": remarks,
         }
         #  为少少相关记录，删除不必要的为空的日志内容信息，
         if not remarks:
-            log.pop('remarks')
+            log.pop("remarks")
         if not msg:
-            log.pop('msg')
+            log.pop("msg")
         try:
             log_msg = json_helper.dict_to_json_ensure_ascii(log)  # 返回文本
             logger.info(log_msg)
         except:
-            logger.info(getattr(request.state, 'traceid') + '：索引：' + str(
-                getattr(request.state, 'trace_links_index')) + ':日志信息写入异常')
-
-
-
+            logger.info(
+                getattr(request.state, "traceid")
+                + "：索引："
+                + str(getattr(request.state, "trace_links_index"))
+                + ":日志信息写入异常"
+            )

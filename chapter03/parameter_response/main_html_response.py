@@ -13,6 +13,7 @@ app = FastAPI()
 
 from fastapi.responses import HTMLResponse
 
+
 def generate_html_response():
     html_content = """
     <html>
@@ -26,13 +27,16 @@ def generate_html_response():
     """
     return HTMLResponse(content=html_content, status_code=200)
 
+
 @app.get("/", response_class=HTMLResponse)
 async def index():
     return generate_html_response()
 
+
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)

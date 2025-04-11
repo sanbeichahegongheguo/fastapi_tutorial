@@ -19,7 +19,10 @@ async def index():
 
 
 @router_uesr.get("/register_action")
-async def register(user: RegisterAaction = Depends(), db_session: AsyncSession = Depends(get_db_session)):
+async def register(
+    user: RegisterAaction = Depends(),
+    db_session: AsyncSession = Depends(get_db_session),
+):
     # 判断是否已经注册
     result = await UserServeries.get_user_by_phone_number(db_session, user.phone_number)
     if not result:
@@ -36,22 +39,27 @@ async def login():
 
 
 @router_uesr.get("/login_action")
-async def login_action(user: LoginAaction = Depends(), db_session: AsyncSession = Depends(get_db_session)):
-    result = await UserServeries.check_user_phone_number_and_password(db_session, password=user.password,
-                                                                      phone_number=user.phone_number)
+async def login_action(
+    user: LoginAaction = Depends(), db_session: AsyncSession = Depends(get_db_session)
+):
+    result = await UserServeries.check_user_phone_number_and_password(
+        db_session, password=user.password, phone_number=user.phone_number
+    )
     if result:
         # 生成一个TOKEN值，签发JWT有效负载信息
         data = {
-            'iss ': user.phone_number,
-            'sub': 'xiaozhongtongxue',
-            'phone_number': user.phone_number,
-            'username': result.username,
+            "iss ": user.phone_number,
+            "sub": "xiaozhongtongxue",
+            "phone_number": user.phone_number,
+            "username": result.username,
             # 设置token的哟有效期
-            'exp': datetime.utcnow() + timedelta(days=2)
+            "exp": datetime.utcnow() + timedelta(days=2),
         }
         # 生成Token
         token = AuthToeknHelper.token_encode(data=data)
         # 登入成功，跳转到聊天室中
-        return RedirectResponse(f"http://127.0.0.1:8000/api/v1/room/online?token={token}")
+        return RedirectResponse(
+            f"http://127.0.0.1:8000/api/v1/room/online?token={token}"
+        )
     else:
         return PlainTextResponse("用户没注册过了！或密码错误，请重新输入账号信息！")

@@ -15,7 +15,7 @@ class WeChatPoi(BaseWeChatAPI):
         :param poi_data: 门店信息字典
         :return: 返回的 JSON 数据包
         """
-        return self._post('poi/addpoi', data=poi_data)
+        return self._post("poi/addpoi", data=poi_data)
 
     def get(self, poi_id):
         """
@@ -27,7 +27,7 @@ class WeChatPoi(BaseWeChatAPI):
         :param poi_id: 门店 ID
         :return: 返回的 JSON 数据包
         """
-        return self._post('poi/getpoi', data={'poi_id': poi_id})
+        return self._post("poi/getpoi", data={"poi_id": poi_id})
 
     def list(self, begin=0, limit=20):
         """
@@ -41,11 +41,11 @@ class WeChatPoi(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'poi/getpoilist',
+            "poi/getpoilist",
             data={
-                'begin': begin,
-                'limit': limit,
-            }
+                "begin": begin,
+                "limit": limit,
+            },
         )
 
     def update(self, poi_data):
@@ -58,7 +58,7 @@ class WeChatPoi(BaseWeChatAPI):
         :param poi_data: 门店信息字典
         :return: 返回的 JSON 数据包
         """
-        return self._post('poi/updatepoi', data=poi_data)
+        return self._post("poi/updatepoi", data=poi_data)
 
     def delete(self, poi_id):
         """
@@ -70,7 +70,7 @@ class WeChatPoi(BaseWeChatAPI):
         :param poi_id: 门店 ID
         :return: 返回的 JSON 数据包
         """
-        return self._post('poi/delpoi', data={'poi_id': poi_id})
+        return self._post("poi/delpoi", data={"poi_id": poi_id})
 
     def get_categories(self):
         """
@@ -82,7 +82,6 @@ class WeChatPoi(BaseWeChatAPI):
         :return: 门店类目表
         """
         res = self._get(
-            'api_getwxcategory',
-            result_processor=lambda x: x['category_list']
+            "api_getwxcategory", result_processor=lambda x: x["category_list"]
         )
         return res

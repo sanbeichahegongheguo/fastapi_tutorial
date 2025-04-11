@@ -30,48 +30,81 @@ class RabbitMQClintWithLock:
             self._clear_all()
 
     def init_sync_rabbit(self, rabbitconf):
-        credentials = pika.PlainCredentials(rabbitconf.RABBIT_USERNAME, rabbitconf.RABBIT_PASSWORD)
+        credentials = pika.PlainCredentials(
+            rabbitconf.RABBIT_USERNAME, rabbitconf.RABBIT_PASSWORD
+        )
         # 关闭心跳检测
         # virtual_host 类型多租户情况环境隔离的分区，默认使用'/'
-        parameters = pika.ConnectionParameters(rabbitconf.RABBIT_HOST, rabbitconf.RABBIT_PORT, rabbitconf.VIRTUAL_HOST,
-                                               credentials, heartbeat=0)
+        parameters = pika.ConnectionParameters(
+            rabbitconf.RABBIT_HOST,
+            rabbitconf.RABBIT_PORT,
+            rabbitconf.VIRTUAL_HOST,
+            credentials,
+            heartbeat=0,
+        )
         self.connection = pika.BlockingConnection(parameters)
         self.channel = self.connection.channel()
 
-
     @property
     def _check_alive(self):
-        """ 检查连接与信道是否存活 """
-        return self.connection and self.connection.is_open and self.channel and self.channel.is_open
+        """检查连接与信道是否存活"""
+        return (
+            self.connection
+            and self.connection.is_open
+            and self.channel
+            and self.channel.is_open
+        )
 
-    def make_exchange_declare(self, exchange_name, exchange_type='fanout', durable=True):
+    def make_exchange_declare(
+        self, exchange_name, exchange_type="fanout", durable=True
+    ):
 
-        self.channel.exchange_declare(exchange=exchange_name, exchange_type=exchange_type, durable=durable)
+        self.channel.exchange_declare(
+            exchange=exchange_name, exchange_type=exchange_type, durable=durable
+        )
 
     def open_confirm_delivery(self):
-        '''开启消息发送到交换机过程监听回调机制，开启后可以在发送消息的时候进行异常的吹'''
+        """开启消息发送到交换机过程监听回调机制，开启后可以在发送消息的时候进行异常的吹"""
         self.channel.confirm_delivery()
 
-    def make_queue_declare(self, queue_name, durable=True, auto_delete=False, arguments=None):
-        '''创建队列'''
+    def make_queue_declare(
+        self, queue_name, durable=True, auto_delete=False, arguments=None
+    ):
+        """创建队列"""
         pass
-        self.channel.queue_declare(queue=queue_name, durable=durable, auto_delete=auto_delete, arguments=arguments)
+        self.channel.queue_declare(
+            queue=queue_name,
+            durable=durable,
+            auto_delete=auto_delete,
+            arguments=arguments,
+        )
 
     def make_queue_bind(self, exchange_name, queue_name, routing_key):
-        '''同伙routing_key把交换机和队列的绑定'''
+        """同伙routing_key把交换机和队列的绑定"""
         pass
-        self.channel.queue_bind(exchange=exchange_name, queue=queue_name, routing_key=routing_key)
+        self.channel.queue_bind(
+            exchange=exchange_name, queue=queue_name, routing_key=routing_key
+        )
 
     def make_queue_delete(self, queue):
         """删除队列"""
         self.channel.queue_delete(queue)
-        print('delete queue:', queue)
+        print("delete queue:", queue)
 
     def make_exchange_delete(self, exchange_name):
         self.channel.exchange_delete(exchange_name)
 
-    def send_basic_publish(self, routing_key, body, content_type="text/plain", exchange_name='',
-                           content_encoding='utf-8', message_ttl=3, delivery_mode=2, is_delay=False):
+    def send_basic_publish(
+        self,
+        routing_key,
+        body,
+        content_type="text/plain",
+        exchange_name="",
+        content_encoding="utf-8",
+        message_ttl=3,
+        delivery_mode=2,
+        is_delay=False,
+    ):
         """生产数据"""
 
         # 使用简单的所发的方式来避免多线程的不安全引发的问题
@@ -100,10 +133,11 @@ class RabbitMQClintWithLock:
                     message_id = str(uuid.uuid4())
 
                     if is_delay:
-                        properties = pika.BasicProperties(content_type=content_type,
-                                                          content_encoding=content_encoding,
-                                                          delivery_mode=delivery_mode,
-                                                          )
+                        properties = pika.BasicProperties(
+                            content_type=content_type,
+                            content_encoding=content_encoding,
+                            delivery_mode=delivery_mode,
+                        )
                         # expiration 字段以毫秒为单位表示 TTL 值,6 秒的 message
                         properties.expiration = f"{message_ttl * 1000}"  # 秒
                         self.channel.basic_publish(
@@ -114,7 +148,7 @@ class RabbitMQClintWithLock:
                             # 发送的消息的内容
                             body=body,
                             # 发现的消息的类型
-                            properties=properties
+                            properties=properties,
                             # pika.BasicProperties中的delivery_mode=2指明message为持久的，1 的话 表示不是持久化 2：表示持久化
                         )
                     else:
@@ -124,13 +158,13 @@ class RabbitMQClintWithLock:
                             # 默认的匹配的key
                             routing_key=routing_key,
                             # 发送的消息的内容
-                            body=body
+                            body=body,
                         )
                 else:
-                    print('连接已断开')
+                    print("连接已断开")
                     # self.init_sync_rabbit()
             except UnroutableError:
-                print('消息发送失败')
+                print("消息发送失败")
 
     def listen_basic_consume(self, queue, func):
         """启动循环监听用于数据消费"""
@@ -150,13 +184,13 @@ class RabbitMQClintWithLock:
         :param channel:
         :return:
         """
-        if not hasattr(self, 'channel'):
+        if not hasattr(self, "channel"):
             raise ValueError("the object of SenderClient has not attr of channel.")
 
         self.channel.close()
 
     def _clear_all(self):
-        """ 清理连接与信道 """
+        """清理连接与信道"""
         if self.connection and self.connection.is_open:
             self.connection.close()
         self.connection = None

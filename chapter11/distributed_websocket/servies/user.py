@@ -18,15 +18,23 @@ class UserServeries:
         return result.scalars().first()
 
     @staticmethod
-    async def get_user_by_phone_number(async_session: AsyncSession, phone_number: str) -> User:
-        result = await async_session.execute(select(User).where(User.phone_number == phone_number))
+    async def get_user_by_phone_number(
+        async_session: AsyncSession, phone_number: str
+    ) -> User:
+        result = await async_session.execute(
+            select(User).where(User.phone_number == phone_number)
+        )
         return result.scalars().first()
 
     @staticmethod
-    async def check_user_phone_number_and_password(async_session: AsyncSession, password: str,
-                                                   phone_number: str) -> User:
+    async def check_user_phone_number_and_password(
+        async_session: AsyncSession, password: str, phone_number: str
+    ) -> User:
         result = await async_session.execute(
-            select(User).where(User.phone_number == phone_number, User.password == password))
+            select(User).where(
+                User.phone_number == phone_number, User.password == password
+            )
+        )
         return result.scalars().first()
 
     @staticmethod

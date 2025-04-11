@@ -14,5 +14,5 @@ class WeChatMisc(BaseWeChatAPI):
 
         :return: 企业微信回调的IP段
         """
-        res = self._get('getcallbackip')
-        return res['ip_list']
+        res = self._get("getcallbackip")
+        return res["ip_list"]

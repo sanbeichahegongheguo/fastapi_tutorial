@@ -23,11 +23,7 @@ class WeChatMisc(BaseWeChatAPI):
 
         """
         return self._post(
-            'shorturl',
-            data={
-                'action': 'long2short',
-                'long_url': long_url
-            }
+            "shorturl", data={"action": "long2short", "long_url": long_url}
         )
 
     def get_wechat_ips(self):
@@ -44,8 +40,5 @@ class WeChatMisc(BaseWeChatAPI):
             ips = client.misc.get_wechat_ips()
 
         """
-        res = self._get(
-            'getcallbackip',
-            result_processor=lambda x: x['ip_list']
-        )
+        res = self._get("getcallbackip", result_processor=lambda x: x["ip_list"])
         return res

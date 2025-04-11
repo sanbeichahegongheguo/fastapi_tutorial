@@ -3,19 +3,19 @@
 # + + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + ++ + + +
 #        ┏┓　　　┏┓+ +
 # 　　　┏┛┻━━━┛┻┓ + +
-# 　　　┃　　　　　　 ┃ 　
+# 　　　┃　　　　　　 ┃
 # 　　　┃　　　━　　　┃ ++ + + +
 # 　　 ████━████ ┃+
 # 　　　┃　　　　　　 ┃ +
 # 　　　┃　　　┻　　　┃
 # 　　　┃　　　　　　 ┃ + +
 # 　　　┗━┓　　　┏━┛
-# 　　　　　┃　　　┃　　　　　　　　　　　
-# 　　　　　┃　　　┃ + + + +
-# 　　　　　┃　　　┃　　　　Codes are far away from bugs with the animal protecting　　　
-# 　　　　　┃　　　┃ + 　　　　神兽保佑,代码无bug　　
 # 　　　　　┃　　　┃
-# 　　　　　┃　　　┃　　+　　　　　　　　　
+# 　　　　　┃　　　┃ + + + +
+# 　　　　　┃　　　┃　　　　Codes are far away from bugs with the animal protecting
+# 　　　　　┃　　　┃ + 　　　　神兽保佑,代码无bug
+# 　　　　　┃　　　┃
+# 　　　　　┃　　　┃　　+
 # 　　　　　┃　 　　┗━━━┓ + +
 # 　　　　　┃ 　　　　　　　┣┓
 # 　　　　　┃ 　　　　　　　┏┛
@@ -43,10 +43,16 @@ def parse_xml_data(xml):
     except (xmltodict.ParsingInterrupted, ExpatError):
         raise Exception()
 
-    if not data or 'xml' not in data:
+    if not data or "xml" not in data:
         raise Exception()
-    data = data['xml']
-    for key in ('total_fee', 'settlement_total_fee', 'cash_fee', 'coupon_fee', 'coupon_count'):
+    data = data["xml"]
+    for key in (
+        "total_fee",
+        "settlement_total_fee",
+        "cash_fee",
+        "coupon_fee",
+        "coupon_count",
+    ):
         if key in data:
             data[key] = int(data[key])
     return data

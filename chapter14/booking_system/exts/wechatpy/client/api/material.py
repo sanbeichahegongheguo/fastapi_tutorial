@@ -18,23 +18,22 @@ class WeChatMaterial(BaseWeChatAPI):
         """
         articles_data = []
         for article in articles:
-            articles_data.append({
-                'thumb_media_id': article['thumb_media_id'],
-                'title': article['title'],
-                'content': article['content'],
-                'author': article.get('author', ''),
-                'content_source_url': article.get('content_source_url', ''),
-                'digest': article.get('digest', ''),
-                'show_cover_pic': article.get('show_cover_pic', 0),
-                'need_open_comment': int(article.get('need_open_comment', False)),
-                'only_fans_can_comment': int(article.get('only_fans_can_comment', False)),
-            })
-        return self._post(
-            'material/add_news',
-            data={
-                'articles': articles_data
-            }
-        )
+            articles_data.append(
+                {
+                    "thumb_media_id": article["thumb_media_id"],
+                    "title": article["title"],
+                    "content": article["content"],
+                    "author": article.get("author", ""),
+                    "content_source_url": article.get("content_source_url", ""),
+                    "digest": article.get("digest", ""),
+                    "show_cover_pic": article.get("show_cover_pic", 0),
+                    "need_open_comment": int(article.get("need_open_comment", False)),
+                    "only_fans_can_comment": int(
+                        article.get("only_fans_can_comment", False)
+                    ),
+                }
+            )
+        return self._post("material/add_news", data={"articles": articles_data})
 
     def add(self, media_type, media_file, title=None, introduction=None):
         """
@@ -48,24 +47,14 @@ class WeChatMaterial(BaseWeChatAPI):
         :param introduction: 视频素材简介，仅上传视频素材时需要
         :return: 返回的 JSON 数据包
         """
-        params = {
-            'access_token': self.access_token,
-            'type': media_type
-        }
-        if media_type == 'video':
-            assert title, 'Video title must be set'
-            assert introduction, 'Video introduction must be set'
-            description = {
-                'title': title,
-                'introduction': introduction
-            }
-            params['description'] = json.dumps(description)
+        params = {"access_token": self.access_token, "type": media_type}
+        if media_type == "video":
+            assert title, "Video title must be set"
+            assert introduction, "Video introduction must be set"
+            description = {"title": title, "introduction": introduction}
+            params["description"] = json.dumps(description)
         return self._post(
-            'material/add_material',
-            params=params,
-            files={
-                'media': media_file
-            }
+            "material/add_material", params=params, files={"media": media_file}
         )
 
     def get(self, media_id):
@@ -77,19 +66,18 @@ class WeChatMaterial(BaseWeChatAPI):
         :param media_id: 素材的 media_id
         :return: 图文素材返回图文列表，其它类型为素材的内容
         """
+
         def _processor(res):
             if isinstance(res, dict):
-                if 'news_item' in res:
+                if "news_item" in res:
                     # 图文素材
-                    return res['news_item']
+                    return res["news_item"]
             return res
 
         res = self._post(
-            'material/get_material',
-            data={
-                'media_id': media_id
-            },
-            result_processor=_processor
+            "material/get_material",
+            data={"media_id": media_id},
+            result_processor=_processor,
         )
         return res
 
@@ -102,12 +90,7 @@ class WeChatMaterial(BaseWeChatAPI):
         :param media_id: 素材的 media_id
         :return: 返回的 JSON 数据包
         """
-        return self._post(
-            'material/del_material',
-            data={
-                'media_id': media_id
-            }
-        )
+        return self._post("material/del_material", data={"media_id": media_id})
 
     def update_article(self, media_id, index, article):
         """
@@ -121,21 +104,17 @@ class WeChatMaterial(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         article_data = {
-            'thumb_media_id': article['thumb_media_id'],
-            'title': article['title'],
-            'content': article['content'],
-            'author': article.get('author', ''),
-            'content_source_url': article.get('content_source_url', ''),
-            'digest': article.get('digest', ''),
-            'show_cover_pic': article.get('show_cover_pic', 0)
+            "thumb_media_id": article["thumb_media_id"],
+            "title": article["title"],
+            "content": article["content"],
+            "author": article.get("author", ""),
+            "content_source_url": article.get("content_source_url", ""),
+            "digest": article.get("digest", ""),
+            "show_cover_pic": article.get("show_cover_pic", 0),
         }
         return self._post(
-            'material/update_news',
-            data={
-                'media_id': media_id,
-                'index': index,
-                'articles': article_data
-            }
+            "material/update_news",
+            data={"media_id": media_id, "index": index, "articles": article_data},
         )
 
     def update_articles(self, media_id, index, articles):
@@ -163,12 +142,8 @@ class WeChatMaterial(BaseWeChatAPI):
         :return: 返回的 JSON 数据包
         """
         return self._post(
-            'material/batchget_material',
-            data={
-                'type': media_type,
-                'offset': offset,
-                'count': count
-            }
+            "material/batchget_material",
+            data={"type": media_type, "offset": offset, "count": count},
         )
 
     def get_count(self):
@@ -179,7 +154,7 @@ class WeChatMaterial(BaseWeChatAPI):
 
         :return: 返回的 JSON 数据包
         """
-        return self._get('material/get_materialcount')
+        return self._get("material/get_materialcount")
 
     def open_comment(self, msg_data_id, index=1):
         """
@@ -187,94 +162,102 @@ class WeChatMaterial(BaseWeChatAPI):
         https://mp.weixin.qq.com/wiki?id=mp1494572718_WzHIY
         """
         return self._post(
-            'comment/open',
+            "comment/open",
             data={
-                'msg_data_id': msg_data_id,
-                'index': index,
-            })
+                "msg_data_id": msg_data_id,
+                "index": index,
+            },
+        )
 
     def close_comment(self, msg_data_id, index=1):
         """
         关闭已群发文章评论
         """
         return self._post(
-            'comment/close',
+            "comment/close",
             data={
-                'msg_data_id': msg_data_id,
-                'index': index,
-            })
+                "msg_data_id": msg_data_id,
+                "index": index,
+            },
+        )
 
     def list_comment(self, msg_data_id, index=1, begin=0, count=50, type=0):
         """
         查看指定文章的评论数据
         """
         return self._post(
-            'comment/list',
+            "comment/list",
             data={
-                'msg_data_id': msg_data_id,
-                'index': index,
-                'begin': begin,
-                'count': count,
-                'type': type
-            })
+                "msg_data_id": msg_data_id,
+                "index": index,
+                "begin": begin,
+                "count": count,
+                "type": type,
+            },
+        )
 
     def markelect_comment(self, msg_data_id, index, user_comment_id):
         """
         将评论标记精选
         """
         return self._post(
-            'comment/markelect',
+            "comment/markelect",
             data={
-                'msg_data_id': msg_data_id,
-                'index': index,
-                'user_comment_id': user_comment_id,
-            })
+                "msg_data_id": msg_data_id,
+                "index": index,
+                "user_comment_id": user_comment_id,
+            },
+        )
 
     def unmarkelect_comment(self, msg_data_id, index, user_comment_id):
         """
         将评论取消精选
         """
         return self._post(
-            'comment/unmarkelect',
+            "comment/unmarkelect",
             data={
-                'msg_data_id': msg_data_id,
-                'index': index,
-                'user_comment_id': user_comment_id,
-            })
+                "msg_data_id": msg_data_id,
+                "index": index,
+                "user_comment_id": user_comment_id,
+            },
+        )
 
     def delete_comment(self, msg_data_id, index, user_comment_id):
         """
         删除评论
         """
         return self._post(
-            'comment/delete',
+            "comment/delete",
             data={
-                'msg_data_id': msg_data_id,
-                'index': index,
-                'user_comment_id': user_comment_id,
-            })
+                "msg_data_id": msg_data_id,
+                "index": index,
+                "user_comment_id": user_comment_id,
+            },
+        )
 
     def add_reply_comment(self, msg_data_id, index, user_comment_id, content):
         """
         回复评论
         """
         return self._post(
-            'comment/reply/add',
+            "comment/reply/add",
             data={
-                'msg_data_id': msg_data_id,
-                'index': index,
-                'user_comment_id': user_comment_id,
-                'content': content
-            })
+                "msg_data_id": msg_data_id,
+                "index": index,
+                "user_comment_id": user_comment_id,
+                "content": content,
+            },
+        )
 
     def delete_reply_comment(self, msg_data_id, index, user_comment_id):
         """
         删除回复
         """
         return self._post(
-            'comment/reply/delete',
+            "comment/reply/delete",
             data={
-                'msg_data_id': msg_data_id,
-                'index': index,
-                'user_comment_id': user_comment_id,
-            })
+                "msg_data_id": msg_data_id,
+                "index": index,
+                "user_comment_id": user_comment_id,
+            },
+        )

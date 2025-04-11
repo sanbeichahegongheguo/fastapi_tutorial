@@ -1,4 +1,5 @@
 import pstats
+
 p = pstats.Stats("runtest_profile.stats")
 p.sort_stats("cumulative")  # 和显示明细一样
 # p.print_stats()

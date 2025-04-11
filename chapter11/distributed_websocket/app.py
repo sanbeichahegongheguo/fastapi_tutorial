@@ -14,6 +14,7 @@ import asyncio
 async def startup_event():
     pass
     from db.database import async_engine, Base
+
     async def init_create_table():
         async with async_engine.begin() as conn:
             # await conn.run_sync(Base.metadata.drop_all)
@@ -27,8 +28,6 @@ async def startup_event():
     # 开始订阅相关的频道消息
     await app.state.room_connection.do_listacton()
 
- 
-
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -39,8 +38,6 @@ async def shutdown_event():
 
 app.include_router(user.router_uesr)
 app.include_router(room.router_char)
-
-
 
 
 def creat_app():

@@ -11,6 +11,7 @@ from fastapi import Request
 
 app = FastAPI()
 
+
 class UserIn(BaseModel):
     username: str
     password: str
@@ -27,6 +28,8 @@ class UserOut(BaseModel):
 @app.post("/user/", response_model=UserOut)
 async def create_user(*, user: UserIn):
     return user
+
+
 @app.post("/user/", response_model=UserOut)
 async def create_user(*, user: UserIn):
     return user
@@ -35,6 +38,7 @@ async def create_user(*, user: UserIn):
 if __name__ == "__main__":
     import uvicorn
     import os
+
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)

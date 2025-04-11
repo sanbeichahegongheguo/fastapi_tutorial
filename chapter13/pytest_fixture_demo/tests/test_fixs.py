@@ -2,10 +2,12 @@ import pytest
 
 
 def setup():
-    print('setup 用例开始前执行')
+    print("setup 用例开始前执行")
+
 
 def teardown():
-    print('teardown 用例结束后执行')
+    print("teardown 用例结束后执行")
+
 
 # 定义一个前后置方法
 @pytest.fixture

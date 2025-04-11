@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, String, DateTime, func
 
 class User(Base):
     # 指定本类映射到users表
-    __tablename__ = 'user'
+    __tablename__ = "user"
     id = Column(Integer, primary_key=True, autoincrement=True)
     # 用户姓名
     username = Column(String(20))
@@ -16,18 +16,19 @@ class User(Base):
     # 用户创建时间
     created_at = Column(DateTime(), default=func.now())
 
+
 class ShortUrl(Base):
     # 指定本类映射到users表
-    __tablename__ = 'short_url'
+    __tablename__ = "short_url"
     id = Column(Integer, primary_key=True, autoincrement=True)
     # 短链标签
-    short_tag = Column(String(20),nullable=False)
+    short_tag = Column(String(20), nullable=False)
     # 短连接地址
     short_url = Column(String(20))
     # 长链接地址
     long_url = Column(String, nullable=False)
     # 访问次数
-    visits_count= Column(Integer, nullable=True)
+    visits_count = Column(Integer, nullable=True)
     # 短链创建时间
     created_at = Column(DateTime(), default=func.now())
     # 短链创建时间

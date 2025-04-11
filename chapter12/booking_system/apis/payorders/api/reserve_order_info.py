@@ -9,13 +9,17 @@ from apis.payorders.schemas import MakeReserveOrderForm
 from utils.datatime_helper import diff_days_for_now_time
 
 
-
-@router_payorders.post("/reserve_order_info", summary='获取预约订单信息')
-async def callbadk(forms: MakeReserveOrderForm, db_session: AsyncSession = Depends(depends_get_db_session)):
+@router_payorders.post("/reserve_order_info", summary="获取预约订单信息")
+async def callbadk(
+    forms: MakeReserveOrderForm,
+    db_session: AsyncSession = Depends(depends_get_db_session),
+):
     # 查询预约信息
-    doctor_result, doctor_nsnuminfo_result = await DoctorServeries.get_doctor_curr_nsindex_scheduling_info(db_session,
-                                                                                                           dno=forms.dno,
-                                                                                                           nsindex=forms.nsindex)
+    doctor_result, doctor_nsnuminfo_result = (
+        await DoctorServeries.get_doctor_curr_nsindex_scheduling_info(
+            db_session, dno=forms.dno, nsindex=forms.nsindex
+        )
+    )
     if not doctor_result:
         return Fail(message="当前医生信息不存在！")
     if not doctor_nsnuminfo_result:
@@ -28,11 +32,15 @@ async def callbadk(forms: MakeReserveOrderForm, db_session: AsyncSession = Depen
     if is_limt_start_time < 0:
         return Fail(message="当前日期无效,无排班信息!")
     backresult = {
-        'dnotime': str(doctor_nsnuminfo_result.dnotime),
-        'dnoampm_tag': '{} {} {}'.format(
+        "dnotime": str(doctor_nsnuminfo_result.dnotime),
+        "dnoampm_tag": "{} {} {}".format(
             num_to_string(doctor_nsnuminfo_result.dnotime.isoweekday()),
-            '上午' if doctor_nsnuminfo_result.ampm == 'am' else '下午',
-            doctor_nsnuminfo_result.tiemampmstr
-        )
+            "上午" if doctor_nsnuminfo_result.ampm == "am" else "下午",
+            doctor_nsnuminfo_result.tiemampmstr,
+        ),
     }
-    return Success(result={**doctor_result, **backresult}) if doctor_result else Fail(message="无当前医生排班信息")
+    return (
+        Success(result={**doctor_result, **backresult})
+        if doctor_result
+        else Fail(message="无当前医生排班信息")
+    )

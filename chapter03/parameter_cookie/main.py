@@ -13,13 +13,13 @@ app = FastAPI()
 @app.get("/set_cookie/")
 def setcookie(response: Response):
     response.set_cookie(key="xiaozhong", value="chengxuyuan-xiaozhongtongxue")
-    return 'set_cookie ok!'
+    return "set_cookie ok!"
+
 
 @app.get("/get_cookie")
 async def Cookier_handel(xiaozhong: Optional[str] = Cookie(None)):
-    return {
-        'xiaozhong':xiaozhong
-    }
+    return {"xiaozhong": xiaozhong}
+
 
 if __name__ == "__main__":
     import uvicorn
@@ -27,4 +27,4 @@ if __name__ == "__main__":
 
     app_model_name = os.path.basename(__file__).replace(".py", "")
     print(app_model_name)
-    uvicorn.run(f"{app_model_name}:app", host='127.0.0.1', reload=True)
+    uvicorn.run(f"{app_model_name}:app", host="127.0.0.1", reload=True)
